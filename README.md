@@ -113,8 +113,8 @@ We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 If you use AgentDoctor in your research, please cite:
 
 ```bibtex
-@software{polara2026agentdoctor,
-  author    = {Polara, Anmol},
+@software{mldeepsystemsagentdoctor,
+  author    = {Parimoo, Anmol},
   title     = {AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability},
   year      = {2026},
   url       = {https://github.com/mldeep-systems/agentdoctor},
