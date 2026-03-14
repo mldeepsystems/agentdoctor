@@ -117,7 +117,7 @@ If you use AgentDoctor in your research, please cite:
   author    = {Parimoo, Anmol},
   title     = {AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability},
   year      = {2026},
-  url       = {https://github.com/mldeep-systems/agentdoctor},
+  url       = {https://github.com/mldeepsystems/agentdoctor},
   license   = {MIT}
 }
 ```
