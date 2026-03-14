@@ -1,127 +1,39 @@
-# AgentDoctor
-
-**Open-source diagnostic SDK for detecting failure pathologies in AI agent systems.**
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI](https://img.shields.io/pypi/v/agentdoctor.svg)](https://pypi.org/project/agentdoctor/)
-
----
-
-AgentDoctor detects operational failure modes in AI agent systems — the kind of failures that observability tools miss because they happen at the reasoning level, not the infrastructure level. It analyses agent execution traces and produces structured diagnostic reports identifying specific pathologies.
-
-## Why AgentDoctor?
-
-Existing agent observability tools (LangSmith, Arize, Datadog LLM) excel at **tracing**: they show you what happened. AgentDoctor does **diagnosis**: it tells you what went wrong and why.
-
-| Tool Type | What it answers | Examples |
-|-----------|----------------|---------|
-| Tracing / Observability | "What calls did the agent make?" | LangSmith, Arize, Datadog |
-| **Diagnostics** | **"Why did the agent fail?"** | **AgentDoctor** |
-
-## The Seven Pathologies
-
-AgentDoctor detects seven operational failure modes, designed to align with the [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/) and [UC Berkeley's MAST framework](https://arxiv.org/abs/2503.13657):
-
-| Pathology | What it means |
-|-----------|--------------|
-| **Context Erosion** | Agent loses critical context over long conversations or multi-step tasks |
-| **Tool Thrashing** | Agent repeatedly calls tools with ineffective or contradictory parameters |
-| **Instruction Drift** | Agent gradually deviates from its original instructions or mandate |
-| **Recovery Blindness** | Agent fails to detect or recover from errors in its own execution |
-| **Hallucinated Tool Success** | Agent treats a failed tool call as successful and proceeds on false premises |
-| **Goal Hijacking** | Agent's objective is altered by adversarial input or environmental manipulation |
-| **Silent Degradation** | Agent's output quality deteriorates without triggering explicit errors |
-
-## Quick Start
-
-```bash
-pip install agentdoctor
-```
-
-```python
-from agentdoctor import Diagnoser
-from agentdoctor.parsers import LangChainParser
-
-# Parse an agent execution trace
-parser = LangChainParser()
-trace = parser.parse("path/to/trace.json")
-
-# Run diagnostics
-diagnoser = Diagnoser()
-report = diagnoser.diagnose(trace)
-
-# View results
-print(report.summary())
-report.to_json("diagnostic_report.json")
-report.to_markdown("diagnostic_report.md")
-```
-
-## Architecture
-
-AgentDoctor uses a three-tier detection architecture:
-
-```
-Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
-                                              │
-                                   ┌──────────┼──────────┐
-                                   │          │          │
-                              Rule-Based   ML Model   LLM-as-Judge
-                              (< 10ms)    (< 100ms)   (async)
-```
-
-**Tier 1 — Rule-Based** (v0.1.0): Deterministic pattern matching on trace structure. Fast, interpretable, zero external dependencies.
-
-**Tier 2 — ML Classifier** (planned): Trained classifiers for pathologies that require statistical pattern recognition.
-
-**Tier 3 — LLM-as-Judge** (planned): Asynchronous LLM evaluation for complex, context-dependent pathology detection.
-
-## Supported Frameworks
-
-| Framework | Parser | Status |
-|-----------|--------|--------|
-| LangChain / LangGraph | `LangChainParser` | v0.1.0 |
-| CrewAI | `CrewAIParser` | v0.1.0 |
-| Raw JSON traces | `JSONParser` | v0.1.0 |
-| AutoGen / AG2 | `AutoGenParser` | Planned |
-| OpenAI Agents SDK | `OpenAIAgentParser` | Planned |
-
-## Output Formats
-
-- **JSON** — machine-readable diagnostic report
-- **Markdown** — human-readable summary with severity ratings
-
-## Research
-
-AgentDoctor is developed by [MLDeep Systems](https://mldeep.io), an AI and data consulting firm specialising in agent reliability.
-
-Related publications:
-
-- Polara, A. (2026). *The Case for a Global Agent Identity Regime.* MLDeep Systems. [mldeep.io/research](https://mldeep.io/research/agent-identity-regime)
-
-The failure pathology taxonomy draws on:
-
-- OWASP GenAI Security Project. (2025). *Top 10 for Agentic Applications.* [genai.owasp.org](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
-- Cemri, M., Pan, M., et al. (2025). *Why Do Multi-Agent LLM Systems Fail?* arXiv:2503.13657. [arxiv.org](https://arxiv.org/abs/2503.13657)
-
-## Contributing
-
-We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## Citation
-
-If you use AgentDoctor in your research, please cite:
-
-```bibtex
-@software{mldeepsystemsagentdoctor,
-  author    = {Parimoo, Anmol},
-  title     = {AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability},
-  year      = {2026},
-  url       = {https://github.com/mldeepsystems/agentdoctor},
-  license   = {MIT}
-}
-```
-
-## License
-
-MIT. See [LICENSE](LICENSE) for details.
+cff-version: 1.2.0
+title: "AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability"
+message: "If you use AgentDoctor in your research, please cite it using this metadata."
+type: software
+authors:
+  - given-names: Anmol
+    family-names: Parimoo
+    affiliation: MLDeep Systems
+    orcid: https://orcid.org/0009-0005-8581-6619
+repository-code: "https://github.com/mldeep-systems/agentdoctor"
+url: "https://mldeep.io/research"
+license: MIT
+version: 0.1.0
+date-released: 2026-05-26
+keywords:
+  - ai-agents
+  - reliability
+  - diagnostics
+  - failure-detection
+  - observability
+  - agent-safety
+  - owasp
+  - multi-agent-systems
+abstract: >-
+  AgentDoctor is a framework-agnostic diagnostic SDK for detecting
+  failure pathologies in AI agent systems. It provides a three-tier
+  detection architecture (rule-based, ML classifier, LLM-as-judge)
+  for identifying seven operational failure modes including context
+  erosion, tool thrashing, instruction drift, recovery blindness,
+  hallucinated tool success, goal hijacking, and silent degradation.
+  The taxonomy aligns with the OWASP Top 10 for Agentic Applications
+  and UC Berkeley's MAST framework.
+references:
+  - type: article
+    title: "The Case for a Global Agent Identity Regime"
+    authors:
+      - given-names: Anmol
+        family-names: Parimoo
+    year: 2026
