@@ -7,7 +7,7 @@ authors:
     family-names: Parimoo
     affiliation: MLDeep Systems
     orcid: https://orcid.org/0009-0005-8581-6619
-repository-code: "https://github.com/mldeep-systems/agentdoctor"
+repository-code: "https://github.com/mldeepsystems/agentdoctor"
 url: "https://mldeep.io/research"
 license: MIT
 version: 0.1.0
