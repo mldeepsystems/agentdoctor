@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from agentdoctor.detectors import ALL_DETECTORS
-from agentdoctor.detectors.base import BaseDetector
-from agentdoctor.models import DetectorResult, Severity, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors import ALL_DETECTORS
+from agentdx.detectors.base import BaseDetector
+from agentdx.models import DetectorResult, Severity, Trace
+from agentdx.taxonomy import Pathology
 
 
 class TestBaseDetector:

@@ -1,6 +1,6 @@
 import pytest
 
-from agentdoctor._text_utils import (
+from agentdx._text_utils import (
     contains_error_signals,
     extract_key_terms,
     simple_linear_regression,

@@ -1,4 +1,4 @@
-"""Tool Thrashing detector for AgentDoctor."""
+"""Tool Thrashing detector for agentdx."""
 
 from __future__ import annotations
 
@@ -6,10 +6,10 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from agentdoctor._text_utils import extract_key_terms, term_overlap
-from agentdoctor.detectors.base import BaseDetector
-from agentdoctor.models import DetectorResult, Severity, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx._text_utils import extract_key_terms, term_overlap
+from agentdx.detectors.base import BaseDetector
+from agentdx.models import DetectorResult, Severity, Trace
+from agentdx.taxonomy import Pathology
 
 # Sentinel for messages where step_index was not assigned by the parser.
 # Using -1 avoids collisions with real step indices (which start at 0).

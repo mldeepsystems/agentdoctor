@@ -1,11 +1,11 @@
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("agentdoctor")
+    __version__ = version("agentdx")
 except PackageNotFoundError:
-    __version__ = "0.1.0"  # fallback for uninstalled usage
+    __version__ = "0.1.0a1"  # fallback for uninstalled usage
 
-from agentdoctor.models import (
+from agentdx.models import (
     DetectorResult,
     Message,
     Role,
@@ -13,7 +13,7 @@ from agentdoctor.models import (
     ToolCall,
     Trace,
 )
-from agentdoctor.detectors import (
+from agentdx.detectors import (
     ALL_DETECTORS,
     BaseDetector,
     ContextErosionDetector,
@@ -24,10 +24,10 @@ from agentdoctor.detectors import (
     SilentDegradationDetector,
     ToolThrashingDetector,
 )
-from agentdoctor.diagnoser import Diagnoser
-from agentdoctor.parsers import BaseParser, JSONParser
-from agentdoctor.report import DiagnosticReport
-from agentdoctor.taxonomy import PATHOLOGY_REGISTRY, Pathology
+from agentdx.diagnoser import Diagnoser
+from agentdx.parsers import BaseParser, JSONParser
+from agentdx.report import DiagnosticReport
+from agentdx.taxonomy import PATHOLOGY_REGISTRY, Pathology
 
 __all__ = [
     "ALL_DETECTORS",

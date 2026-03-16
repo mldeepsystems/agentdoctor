@@ -6,15 +6,15 @@ import os
 
 import pytest
 
-from agentdoctor.detectors import BaseDetector
-from agentdoctor.detectors.tool_thrashing import (
+from agentdx.detectors import BaseDetector
+from agentdx.detectors.tool_thrashing import (
     ToolThrashingDetector,
     _UNKNOWN_STEP,
     _serialize_args,
 )
-from agentdoctor.models import Message, Role, Severity, ToolCall, Trace
-from agentdoctor.parsers import JSONParser
-from agentdoctor.taxonomy import Pathology
+from agentdx.models import Message, Role, Severity, ToolCall, Trace
+from agentdx.parsers import JSONParser
+from agentdx.taxonomy import Pathology
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "traces")
 HEALTHY_TRACE = os.path.join(FIXTURES_DIR, "healthy_trace.json")

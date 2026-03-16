@@ -21,7 +21,7 @@ jobs:
         run: pip install ruff
 
       - name: Check lint
-        run: ruff check agentdoctor/ tests/
+        run: ruff check agentdx/ tests/
 
       - name: Check formatting
-        run: ruff format --check agentdoctor/ tests/
+        run: ruff format --check agentdx/ tests/

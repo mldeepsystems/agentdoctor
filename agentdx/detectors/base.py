@@ -1,11 +1,11 @@
-"""Base detector interface for AgentDoctor pathology detectors."""
+"""Base detector interface for agentdx pathology detectors."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from agentdoctor.models import DetectorResult, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.models import DetectorResult, Trace
+from agentdx.taxonomy import Pathology
 
 
 class BaseDetector(ABC):

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentdoctor.detectors.goal_hijacking import GoalHijackingDetector
-from agentdoctor.models import Message, Role, Severity, ToolCall, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors.goal_hijacking import GoalHijackingDetector
+from agentdx.models import Message, Role, Severity, ToolCall, Trace
+from agentdx.taxonomy import Pathology
 
 
 def _msg(role: Role, content: str, step: int | None = None, tool_calls=None) -> Message:
@@ -187,11 +187,11 @@ class TestConfig:
 
 class TestImports:
     def test_import_from_detectors(self):
-        from agentdoctor.detectors import GoalHijackingDetector
+        from agentdx.detectors import GoalHijackingDetector
 
         assert GoalHijackingDetector is not None
 
     def test_import_from_top_level(self):
-        from agentdoctor import GoalHijackingDetector
+        from agentdx import GoalHijackingDetector
 
         assert GoalHijackingDetector is not None

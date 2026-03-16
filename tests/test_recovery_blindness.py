@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentdoctor.detectors.recovery_blindness import RecoveryBlindnessDetector
-from agentdoctor.models import Message, Role, ToolCall, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors.recovery_blindness import RecoveryBlindnessDetector
+from agentdx.models import Message, Role, ToolCall, Trace
+from agentdx.taxonomy import Pathology
 
 
 def _msg(role: Role, content: str, step: int | None = None, tool_calls=None) -> Message:
@@ -252,11 +252,11 @@ class TestConfig:
 
 class TestImports:
     def test_import_from_detectors(self):
-        from agentdoctor.detectors import RecoveryBlindnessDetector
+        from agentdx.detectors import RecoveryBlindnessDetector
 
         assert RecoveryBlindnessDetector is not None
 
     def test_import_from_top_level(self):
-        from agentdoctor import RecoveryBlindnessDetector
+        from agentdx import RecoveryBlindnessDetector
 
         assert RecoveryBlindnessDetector is not None
