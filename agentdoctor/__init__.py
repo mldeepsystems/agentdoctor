@@ -13,7 +13,14 @@ from agentdoctor.models import (
     ToolCall,
     Trace,
 )
-from agentdoctor.detectors import ALL_DETECTORS, BaseDetector, ToolThrashingDetector
+from agentdoctor.detectors import (
+    ALL_DETECTORS,
+    BaseDetector,
+    ContextErosionDetector,
+    HallucinatedToolSuccessDetector,
+    RecoveryBlindnessDetector,
+    ToolThrashingDetector,
+)
 from agentdoctor.diagnoser import Diagnoser
 from agentdoctor.parsers import BaseParser, JSONParser
 from agentdoctor.report import DiagnosticReport
@@ -23,8 +30,11 @@ __all__ = [
     "ALL_DETECTORS",
     "BaseDetector",
     "BaseParser",
+    "ContextErosionDetector",
     "Diagnoser",
     "DiagnosticReport",
+    "HallucinatedToolSuccessDetector",
+    "RecoveryBlindnessDetector",
     "ToolThrashingDetector",
     "DetectorResult",
     "JSONParser",

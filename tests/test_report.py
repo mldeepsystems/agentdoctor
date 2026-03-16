@@ -7,7 +7,7 @@ import os
 import tempfile
 
 from agentdoctor.models import DetectorResult, Severity
-from agentdoctor.report import DiagnosticReport
+from agentdoctor.report import DiagnosticReport, _SEVERITY_ORDER
 from agentdoctor.taxonomy import Pathology
 
 
@@ -333,3 +333,14 @@ class TestFullReport:
         d1 = report.to_dict()
         d2 = json.loads(json.dumps(d1))
         assert d1 == d2
+
+
+class TestSeverityOrderGuard:
+    def test_covers_all_severity_members(self):
+        """Catch drift: _SEVERITY_ORDER must contain every Severity member."""
+        assert set(_SEVERITY_ORDER) == set(Severity)
+
+    def test_ordering_is_low_to_critical(self):
+        """Verify explicit expected order: LOW < MEDIUM < HIGH < CRITICAL."""
+        expected = [Severity.LOW, Severity.MEDIUM, Severity.HIGH, Severity.CRITICAL]
+        assert list(_SEVERITY_ORDER) == expected
