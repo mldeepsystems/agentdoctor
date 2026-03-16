@@ -18,8 +18,9 @@ class TestExtractKeyTerms:
         assert "error" in terms
 
     def test_filters_short_words(self):
-        terms = extract_key_terms("I am a big fan of AI")
-        assert "fan" not in terms  # < 4 chars
+        terms = extract_key_terms("I am a go to it")
+        assert "am" not in terms  # < 3 chars
+        assert "go" not in terms  # < 3 chars
         assert len(terms) == 0  # all words are short or stop words
 
     def test_filters_stop_words(self):
@@ -39,6 +40,25 @@ class TestExtractKeyTerms:
         assert "call" in terms
         assert "result" in terms
         assert "success" in terms
+
+    def test_three_char_technical_terms(self):
+        terms = extract_key_terms("The API uses SQL and git")
+        assert "api" in terms
+        assert "sql" in terms
+        assert "git" in terms
+
+    def test_unicode_input(self):
+        terms = extract_key_terms("café résumé naïve")
+        # non-ascii stripped by [^a-z]+ split; remaining fragments kept if >= 3
+        assert "caf" in terms
+        assert "sum" in terms
+        assert "na" not in terms
+
+    def test_digit_only_input(self):
+        assert extract_key_terms("12345 678") == set()
+
+    def test_all_stop_words(self):
+        assert extract_key_terms("this that the those them they") == set()
 
 
 class TestTermOverlap:
@@ -96,6 +116,16 @@ class TestSimpleLinearRegression:
         with pytest.raises(ValueError, match="at least two"):
             simple_linear_regression([], [])
 
+    def test_negative_slope(self):
+        slope, intercept = simple_linear_regression([1, 2, 3], [6, 4, 2])
+        assert slope == pytest.approx(-2.0)
+        assert intercept == pytest.approx(8.0)
+
+    def test_float_inputs(self):
+        slope, intercept = simple_linear_regression([0.5, 1.5, 2.5], [1.0, 2.0, 3.0])
+        assert slope == pytest.approx(1.0)
+        assert intercept == pytest.approx(0.5)
+
 
 class TestContainsErrorSignals:
     @pytest.mark.parametrize(
@@ -111,6 +141,13 @@ class TestContainsErrorSignals:
             "Access denied",
             "exception raised",
             "Request timed out",
+            "fatal: not a git repository",
+            "panic: runtime error",
+            "Aborted (core dumped)",
+            "HTTP 400 Bad Request",
+            "HTTP 403 Forbidden",
+            "Rate limited: 429",
+            "Go stacktrace dump",
         ],
     )
     def test_detects_error_signals(self, text):
@@ -127,3 +164,9 @@ class TestContainsErrorSignals:
     )
     def test_no_false_positives(self, text):
         assert contains_error_signals(text) is False
+
+    def test_known_substring_matches(self):
+        # Documents known behavior: substring matching means these trigger.
+        # This is intentional — detectors refine context around matches.
+        assert contains_error_signals("error_handler class works") is True
+        assert contains_error_signals("The failed_jobs table is empty") is True

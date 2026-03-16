@@ -30,7 +30,8 @@ _WORD_SPLIT_RE = re.compile(r"[^a-z]+")
 
 _ERROR_SIGNALS = re.compile(
     r"error|failed|failure|exception|traceback|timeout|timed\s*out"
-    r"|404|500|502|503|refused|denied|unauthorized|forbidden|not\s*found",
+    r"|stacktrace|fatal|panic|abort"
+    r"|400|403|404|429|500|502|503|refused|denied|unauthorized|forbidden|not\s*found",
     re.IGNORECASE,
 )
 
@@ -38,17 +39,18 @@ _ERROR_SIGNALS = re.compile(
 def extract_key_terms(text: str) -> set[str]:
     """Extract meaningful terms from *text*.
 
-    Lowercases, splits on non-alpha characters, drops tokens shorter than 4
+    Lowercases, splits on non-alpha characters, drops tokens shorter than 3
     characters, and removes common English stop words.
     """
     tokens = _WORD_SPLIT_RE.split(text.lower())
-    return {t for t in tokens if len(t) >= 4 and t not in STOP_WORDS}
+    return {t for t in tokens if len(t) >= 3 and t not in STOP_WORDS}
 
 
 def term_overlap(terms_a: set[str], terms_b: set[str]) -> float:
     """Return the Jaccard similarity between two term sets.
 
-    Returns 0.0 when either set is empty.
+    Returns 0.0 when either set is empty, indicating no information rather
+    than perfect agreement.
     """
     if not terms_a or not terms_b:
         return 0.0
@@ -64,8 +66,9 @@ def simple_linear_regression(
     """Return (slope, intercept) for a simple linear regression.
 
     Raises ``ValueError`` when *xs* and *ys* differ in length or contain
-    fewer than two points.  Returns (0.0, mean_y) when x has zero
-    variance.
+    fewer than two points.  Returns ``(0.0, mean_y)`` when x has zero
+    variance (constant x), treating the best-fit line as horizontal at the
+    mean of y.
     """
     n = len(xs)
     if n != len(ys):
