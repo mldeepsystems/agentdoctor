@@ -115,11 +115,7 @@ Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
 
 ## Research
 
-agentdx is developed by [MLDeep Systems](https://mldeep.io), an AI and data consulting firm specialising in agent reliability.
-
-Related publications:
-
-- Polara, A. (2026). *The Case for a Global Agent Identity Regime.* MLDeep Systems. [mldeep.io/research](https://mldeep.io/research/agent-identity-regime)
+agentdx is developed by [MLDeep Systems](https://mldeep.io), an AI and data consulting firm specialising in agent reliability. See [mldeep.io/research](https://mldeep.io/research) for related publications.
 
 The failure pathology taxonomy draws on:
 
