@@ -17,8 +17,11 @@ from agentdoctor.detectors import (
     ALL_DETECTORS,
     BaseDetector,
     ContextErosionDetector,
+    GoalHijackingDetector,
     HallucinatedToolSuccessDetector,
+    InstructionDriftDetector,
     RecoveryBlindnessDetector,
+    SilentDegradationDetector,
     ToolThrashingDetector,
 )
 from agentdoctor.diagnoser import Diagnoser
@@ -33,8 +36,11 @@ __all__ = [
     "ContextErosionDetector",
     "Diagnoser",
     "DiagnosticReport",
+    "GoalHijackingDetector",
     "HallucinatedToolSuccessDetector",
+    "InstructionDriftDetector",
     "RecoveryBlindnessDetector",
+    "SilentDegradationDetector",
     "ToolThrashingDetector",
     "DetectorResult",
     "JSONParser",
