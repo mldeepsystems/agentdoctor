@@ -1,0 +1,70 @@
+{
+  "trace_id": "thrashing-001",
+  "metadata": {"source": "test"},
+  "messages": [
+    {
+      "role": "user",
+      "content": "Find the best Python testing framework."
+    },
+    {
+      "role": "assistant",
+      "content": "Let me search for that.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "best Python testing framework"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Let me try again.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "best Python testing framework 2024"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Searching once more.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "top Python testing framework comparison"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "One more search.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "Python testing framework best practices"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Let me search differently.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "Python test framework ranking best"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    }
+  ]
+}

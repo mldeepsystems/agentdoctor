@@ -1,0 +1,90 @@
+name: "Tests: Full Suite"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Step 1: discover every test_*.py file ──────────────────────────
+  discover:
+    name: Discover test files
+    runs-on: ubuntu-latest
+    outputs:
+      test_files: ${{ steps.find.outputs.test_files }}
+      test_count: ${{ steps.find.outputs.test_count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find all test files
+        id: find
+        run: |
+          # Collect every test_*.py under tests/, output as JSON array
+          files=$(find tests -name 'test_*.py' -type f | sort)
+          json=$(echo "$files" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          count=$(echo "$files" | grep -c '^' || true)
+          echo "test_files=$json" >> "$GITHUB_OUTPUT"
+          echo "test_count=$count" >> "$GITHUB_OUTPUT"
+          echo "Discovered $count test files:"
+          echo "$files"
+
+  # ── Step 2: run each test file as a parallel matrix job ────────────
+  test:
+    name: "${{ matrix.test_file }} (py${{ matrix.python-version }})"
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        test_file: ${{ fromJson(needs.discover.outputs.test_files) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run ${{ matrix.test_file }}
+        run: python -m pytest ${{ matrix.test_file }} -v
+
+  # ── Step 3: verify no test files were missed ───────────────────────
+  sync-check:
+    name: Test sync check
+    needs: [discover, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify all test files were discovered
+        run: |
+          # Count test files on disk vs what the discover job found
+          actual=$(find tests -name 'test_*.py' -type f | wc -l | tr -d ' ')
+          discovered=${{ needs.discover.outputs.test_count }}
+          echo "Files on disk: $actual"
+          echo "Files discovered: $discovered"
+          if [ "$actual" != "$discovered" ]; then
+            echo "::error::Test file count mismatch! $actual on disk vs $discovered discovered."
+            echo "New test files may not be getting picked up. Check the discover job."
+            exit 1
+          fi
+          echo "All $actual test files accounted for."
+
+      - name: Verify test files follow naming convention
+        run: |
+          # Catch test files that DON'T match test_*.py (would be silently skipped)
+          bad_files=$(find tests -name '*.py' -type f \
+            ! -name 'test_*.py' \
+            ! -name '__init__.py' \
+            ! -name 'conftest.py' \
+            ! -path '*/fixtures/*' \
+            || true)
+          if [ -n "$bad_files" ]; then
+            echo "::warning::Found Python files in tests/ that don't match test_*.py convention:"
+            echo "$bad_files"
+            echo "These files will NOT be auto-discovered by CI."
+          fi

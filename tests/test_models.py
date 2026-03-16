@@ -64,7 +64,7 @@ class TestToolCall:
         tc_none = ToolCall(tool_name="x", result=None)
         tc_empty = ToolCall(tool_name="x", result="")
         assert tc_none.result is None  # no result captured
-        assert tc_empty.result == ""   # tool returned empty output
+        assert tc_empty.result == ""  # tool returned empty output
 
 
 class TestMessage:
@@ -216,11 +216,7 @@ class TestDetectorResult:
             )
 
     def test_confidence_boundary_values(self):
-        r0 = DetectorResult(
-            pathology=Pathology.CONTEXT_EROSION, detected=False, confidence=0.0
-        )
-        r1 = DetectorResult(
-            pathology=Pathology.CONTEXT_EROSION, detected=True, confidence=1.0
-        )
+        r0 = DetectorResult(pathology=Pathology.CONTEXT_EROSION, detected=False, confidence=0.0)
+        r1 = DetectorResult(pathology=Pathology.CONTEXT_EROSION, detected=True, confidence=1.0)
         assert r0.confidence == 0.0
         assert r1.confidence == 1.0
