@@ -10,12 +10,17 @@ from agentdoctor.taxonomy import Pathology
 
 
 class Role(str, Enum):
-    """Role of a message participant in an agent trace."""
+    """Role of a message participant in an agent trace.
+
+    FUNCTION is included for compatibility with OpenAI's API, which uses
+    "function" alongside "tool" for legacy function-calling traces.
+    """
 
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
     TOOL = "tool"
+    FUNCTION = "function"
 
 
 class Severity(str, Enum):
@@ -29,7 +34,18 @@ class Severity(str, Enum):
 
 @dataclass
 class ToolCall:
-    """A single tool invocation within an agent trace."""
+    """A single tool invocation within an agent trace.
+
+    Fields:
+        tool_name: Identifier of the tool that was called.
+        arguments: Keyword arguments passed to the tool.
+        result: String representation of the tool's output. ``None`` means
+            no result was captured; ``""`` means the tool returned empty output.
+        success: Whether the tool call succeeded. Defaults to ``True``.
+        error_message: Error description when the call failed. May be set
+            alongside ``success=True`` for partial failures.
+        timestamp: ISO-8601 timestamp string, or ``None`` if unavailable.
+    """
 
     tool_name: str
     arguments: dict[str, Any] = field(default_factory=dict)
@@ -41,7 +57,16 @@ class ToolCall:
 
 @dataclass
 class Message:
-    """A single message in an agent execution trace."""
+    """A single message in an agent execution trace.
+
+    Fields:
+        role: The participant role (system, user, assistant, tool, function).
+        content: Text body of the message. May be empty for tool-only turns.
+        tool_calls: Tool invocations associated with this message.
+        step_index: Monotonic index for ordering within the trace.
+        timestamp: ISO-8601 timestamp string, or ``None`` if unavailable.
+        metadata: Arbitrary key-value pairs from the source framework.
+    """
 
     role: Role
     content: str = ""
@@ -53,7 +78,11 @@ class Message:
 
 @dataclass
 class Trace:
-    """A complete agent execution trace."""
+    """A complete agent execution trace.
+
+    Traces are mutable so that parsers can build them incrementally via
+    ``trace.messages.append(msg)``.
+    """
 
     messages: list[Message] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -61,11 +90,19 @@ class Trace:
 
     @property
     def system_prompt(self) -> str | None:
-        """Return the content of the first system message, if any."""
+        """Return the content of the first system message, if any.
+
+        For traces with multiple system messages, use :pyattr:`system_prompts`.
+        """
         for msg in self.messages:
             if msg.role is Role.SYSTEM:
                 return msg.content
         return None
+
+    @property
+    def system_prompts(self) -> list[str]:
+        """Return the content of all system messages, in order."""
+        return [msg.content for msg in self.messages if msg.role is Role.SYSTEM]
 
     @property
     def tool_calls(self) -> list[ToolCall]:
@@ -85,7 +122,21 @@ class Trace:
 
 @dataclass
 class DetectorResult:
-    """The output of a single pathology detector."""
+    """The output of a single pathology detector.
+
+    Fields:
+        pathology: Which pathology this result is about.
+        detected: Whether the pathology was found.
+        confidence: Confidence score in ``[0.0, 1.0]``. Represents certainty
+            in the *detected* verdict — ``detected=False, confidence=0.9``
+            means "90 % sure this pathology is absent."
+        severity: Severity when detected. Defaults to LOW.
+        evidence: Human-readable evidence strings supporting the verdict.
+            May be non-empty even when ``detected=False`` (investigated but
+            not confirmed).
+        description: Short summary of the finding.
+        recommendation: Suggested remediation.
+    """
 
     pathology: Pathology
     detected: bool
@@ -94,3 +145,9 @@ class DetectorResult:
     evidence: list[str] = field(default_factory=list)
     description: str = ""
     recommendation: str = ""
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= self.confidence <= 1.0:
+            raise ValueError(
+                f"confidence must be between 0.0 and 1.0, got {self.confidence}"
+            )

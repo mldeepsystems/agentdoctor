@@ -17,6 +17,7 @@ class TestEnums:
         assert Role.USER.value == "user"
         assert Role.ASSISTANT.value == "assistant"
         assert Role.TOOL.value == "tool"
+        assert Role.FUNCTION.value == "function"
 
     def test_role_is_string(self):
         assert isinstance(Role.SYSTEM, str)
@@ -59,6 +60,12 @@ class TestToolCall:
         assert tc.arguments == {"query": "test"}
         assert tc.result == "found 3 results"
 
+    def test_empty_string_result_vs_none(self):
+        tc_none = ToolCall(tool_name="x", result=None)
+        tc_empty = ToolCall(tool_name="x", result="")
+        assert tc_none.result is None  # no result captured
+        assert tc_empty.result == ""   # tool returned empty output
+
 
 class TestMessage:
     def test_creation_with_defaults(self):
@@ -75,6 +82,12 @@ class TestMessage:
         msg = Message(role=Role.ASSISTANT, content="Let me search", tool_calls=[tc])
         assert len(msg.tool_calls) == 1
         assert msg.tool_calls[0].tool_name == "search"
+
+    def test_mutable_list_isolation(self):
+        msg_a = Message(role=Role.USER)
+        msg_b = Message(role=Role.USER)
+        msg_a.tool_calls.append(ToolCall(tool_name="only_in_a"))
+        assert len(msg_b.tool_calls) == 0  # not shared
 
 
 class TestTrace:
@@ -99,6 +112,21 @@ class TestTrace:
     def test_system_prompt_absent(self):
         trace = Trace(messages=[Message(role=Role.USER, content="Hello")])
         assert trace.system_prompt is None
+
+    def test_system_prompts_multiple(self):
+        trace = Trace(
+            messages=[
+                Message(role=Role.SYSTEM, content="First system prompt"),
+                Message(role=Role.USER, content="Hello"),
+                Message(role=Role.SYSTEM, content="Updated system prompt"),
+            ]
+        )
+        assert trace.system_prompt == "First system prompt"
+        assert trace.system_prompts == ["First system prompt", "Updated system prompt"]
+
+    def test_system_prompts_empty(self):
+        trace = Trace(messages=[Message(role=Role.USER, content="Hello")])
+        assert trace.system_prompts == []
 
     def test_tool_calls_aggregation(self):
         tc1 = ToolCall(tool_name="search", arguments={"q": "a"})
@@ -160,3 +188,39 @@ class TestDetectorResult:
         assert len(result.evidence) == 2
         assert result.confidence == 0.85
         assert result.severity is Severity.HIGH
+
+    def test_not_detected_with_evidence(self):
+        result = DetectorResult(
+            pathology=Pathology.CONTEXT_EROSION,
+            detected=False,
+            confidence=0.7,
+            evidence=["Checked context window — no loss observed"],
+        )
+        assert result.detected is False
+        assert len(result.evidence) == 1
+
+    def test_confidence_out_of_bounds_high(self):
+        with pytest.raises(ValueError, match="confidence"):
+            DetectorResult(
+                pathology=Pathology.CONTEXT_EROSION,
+                detected=True,
+                confidence=1.5,
+            )
+
+    def test_confidence_out_of_bounds_low(self):
+        with pytest.raises(ValueError, match="confidence"):
+            DetectorResult(
+                pathology=Pathology.CONTEXT_EROSION,
+                detected=True,
+                confidence=-0.1,
+            )
+
+    def test_confidence_boundary_values(self):
+        r0 = DetectorResult(
+            pathology=Pathology.CONTEXT_EROSION, detected=False, confidence=0.0
+        )
+        r1 = DetectorResult(
+            pathology=Pathology.CONTEXT_EROSION, detected=True, confidence=1.0
+        )
+        assert r0.confidence == 0.0
+        assert r1.confidence == 1.0
