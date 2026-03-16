@@ -9,12 +9,7 @@ from typing import Any
 from agentdoctor.models import DetectorResult, Severity
 from agentdoctor.taxonomy import PATHOLOGY_REGISTRY
 
-_SEVERITY_ORDER: list[Severity] = [
-    Severity.LOW,
-    Severity.MEDIUM,
-    Severity.HIGH,
-    Severity.CRITICAL,
-]
+_SEVERITY_ORDER: tuple[Severity, ...] = tuple(Severity)
 
 
 @dataclass

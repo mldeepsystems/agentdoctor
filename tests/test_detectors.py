@@ -1,9 +1,10 @@
-"""Tests for the BaseDetector interface."""
+"""Tests for the BaseDetector interface and detector registry."""
 
 from __future__ import annotations
 
 import pytest
 
+from agentdoctor.detectors import ALL_DETECTORS
 from agentdoctor.detectors.base import BaseDetector
 from agentdoctor.models import DetectorResult, Severity, Trace
 from agentdoctor.taxonomy import Pathology
@@ -54,3 +55,16 @@ class TestBaseDetector:
         assert result.confidence == 0.9
         assert result.severity is Severity.HIGH
         assert result.pathology is Pathology.TOOL_THRASHING
+
+
+class TestAllDetectorsRegistry:
+    def test_is_tuple(self):
+        assert isinstance(ALL_DETECTORS, tuple)
+
+    def test_immutable(self):
+        with pytest.raises(AttributeError):
+            ALL_DETECTORS.append(None)  # type: ignore[attr-defined]
+
+    def test_all_are_base_detector_subclasses(self):
+        for cls in ALL_DETECTORS:
+            assert issubclass(cls, BaseDetector)

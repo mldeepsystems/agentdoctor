@@ -208,5 +208,5 @@ class TestImports:
     def test_all_detectors_exported(self):
         from agentdoctor import ALL_DETECTORS
 
-        assert isinstance(ALL_DETECTORS, list)
+        assert isinstance(ALL_DETECTORS, tuple)
         assert len(ALL_DETECTORS) >= 1
