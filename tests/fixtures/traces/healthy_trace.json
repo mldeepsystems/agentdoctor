@@ -1,0 +1,34 @@
+{
+  "trace_id": "healthy-001",
+  "metadata": {"source": "test"},
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful weather assistant."
+    },
+    {
+      "role": "user",
+      "content": "What is the weather in San Francisco?"
+    },
+    {
+      "role": "assistant",
+      "content": "Let me check the weather for you.",
+      "tool_calls": [
+        {
+          "tool_name": "get_weather",
+          "arguments": {"city": "San Francisco", "units": "fahrenheit"},
+          "result": "72F, sunny",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "72F, sunny"
+    },
+    {
+      "role": "assistant",
+      "content": "The weather in San Francisco is 72F and sunny."
+    }
+  ]
+}
