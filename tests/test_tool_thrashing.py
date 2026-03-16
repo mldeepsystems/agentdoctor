@@ -58,27 +58,21 @@ class TestFixtureTraces:
 
 class TestProgrammatic:
     def test_three_identical_calls_detected(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 3
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 3)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is True
         assert result.confidence == pytest.approx(0.6)
         assert result.severity is Severity.MEDIUM
 
     def test_five_identical_calls_critical(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 5
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 5)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is True
         assert result.confidence == pytest.approx(1.0)
         assert result.severity is Severity.CRITICAL
 
     def test_two_calls_not_detected(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 2
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 2)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is False
 
@@ -105,9 +99,7 @@ class TestProgrammatic:
         assert result.detected is False
 
     def test_four_calls_high_severity(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 4
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 4)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is True
         assert result.severity is Severity.HIGH
@@ -141,9 +133,7 @@ class TestNumericArgs:
 
     def test_identical_numeric_args_detected(self):
         """fetch_page(page=1) repeated 3x is genuine thrashing."""
-        trace = _make_trace_with_tool_calls(
-            "fetch_page", [{"page": 1}] * 3
-        )
+        trace = _make_trace_with_tool_calls("fetch_page", [{"page": 1}] * 3)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is True
 
@@ -198,9 +188,7 @@ class TestNumericArgs:
 
     def test_none_args_identical(self):
         """Three calls with arg=None are identical → thrashing."""
-        trace = _make_trace_with_tool_calls(
-            "reset", [{"target": None}] * 3
-        )
+        trace = _make_trace_with_tool_calls("reset", [{"target": None}] * 3)
         result = ToolThrashingDetector().detect(trace)
         assert result.detected is True
 
@@ -450,9 +438,7 @@ class TestThresholdBoundary:
             ],
         )
         # similarity is 0.0 between these, and threshold is 0.0 → 0.0 >= 0.0
-        result = ToolThrashingDetector(
-            similarity_threshold=0.0, min_repeats=3
-        ).detect(trace)
+        result = ToolThrashingDetector(similarity_threshold=0.0, min_repeats=3).detect(trace)
         assert result.detected is True
 
     def test_threshold_one_requires_exact_match(self):
@@ -483,9 +469,7 @@ class TestThresholdBoundary:
 
 class TestConfig:
     def test_custom_min_repeats(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 2
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 2)
         result = ToolThrashingDetector(min_repeats=2).detect(trace)
         assert result.detected is True
 
@@ -504,9 +488,7 @@ class TestConfig:
 
     def test_custom_window(self):
         """Window of 3 should still catch 3 adjacent identical calls."""
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 3
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 3)
         result = ToolThrashingDetector(window_size=3).detect(trace)
         assert result.detected is True
 
@@ -516,16 +498,12 @@ class TestConfig:
 
 class TestEvidence:
     def test_evidence_contains_tool_name(self):
-        trace = _make_trace_with_tool_calls(
-            "web_search", [{"q": "python"}] * 3
-        )
+        trace = _make_trace_with_tool_calls("web_search", [{"q": "python"}] * 3)
         result = ToolThrashingDetector().detect(trace)
         assert any("web_search" in e for e in result.evidence)
 
     def test_evidence_contains_step_indices(self):
-        trace = _make_trace_with_tool_calls(
-            "search", [{"q": "python"}] * 3
-        )
+        trace = _make_trace_with_tool_calls("search", [{"q": "python"}] * 3)
         result = ToolThrashingDetector().detect(trace)
         assert any("Step indices" in e for e in result.evidence)
 

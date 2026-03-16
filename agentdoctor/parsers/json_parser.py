@@ -71,9 +71,7 @@ class JSONParser(BaseParser):
         return messages
 
     @staticmethod
-    def _build_tool_calls(
-        raw_calls: list[dict[str, Any]], msg_index: int
-    ) -> list[ToolCall]:
+    def _build_tool_calls(raw_calls: list[dict[str, Any]], msg_index: int) -> list[ToolCall]:
         calls: list[ToolCall] = []
         for i, raw in enumerate(raw_calls):
             if "tool_name" not in raw:

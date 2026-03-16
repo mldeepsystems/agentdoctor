@@ -91,9 +91,7 @@ class TestJSONParserFromFile:
             {"role": "user", "content": "hi"},
             {"role": "assistant", "content": "hello"},
         ]
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".json", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(messages, f)
             f.flush()
             try:
@@ -137,10 +135,12 @@ class TestJSONParserFromDict:
 
 class TestJSONParserFromList:
     def test_parse_bare_list(self):
-        trace = JSONParser().parse([
-            {"role": "user", "content": "hello"},
-            {"role": "assistant", "content": "hi"},
-        ])
+        trace = JSONParser().parse(
+            [
+                {"role": "user", "content": "hello"},
+                {"role": "assistant", "content": "hi"},
+            ]
+        )
         assert len(trace.messages) == 2
         assert trace.trace_id is None
 
@@ -181,11 +181,13 @@ class TestRoleMapping:
 
 class TestStepIndex:
     def test_sequential_assignment(self):
-        trace = JSONParser().parse([
-            {"role": "user", "content": "a"},
-            {"role": "assistant", "content": "b"},
-            {"role": "user", "content": "c"},
-        ])
+        trace = JSONParser().parse(
+            [
+                {"role": "user", "content": "a"},
+                {"role": "assistant", "content": "b"},
+                {"role": "user", "content": "c"},
+            ]
+        )
         assert [m.step_index for m in trace.messages] == [0, 1, 2]
 
 
@@ -194,20 +196,22 @@ class TestStepIndex:
 
 class TestToolCallParsing:
     def test_tool_calls_parsed(self):
-        trace = JSONParser().parse([
-            {
-                "role": "assistant",
-                "content": "calling",
-                "tool_calls": [
-                    {
-                        "tool_name": "search",
-                        "arguments": {"q": "test"},
-                        "result": "found",
-                        "success": True,
-                    }
-                ],
-            }
-        ])
+        trace = JSONParser().parse(
+            [
+                {
+                    "role": "assistant",
+                    "content": "calling",
+                    "tool_calls": [
+                        {
+                            "tool_name": "search",
+                            "arguments": {"q": "test"},
+                            "result": "found",
+                            "success": True,
+                        }
+                    ],
+                }
+            ]
+        )
         msg = trace.messages[0]
         assert len(msg.tool_calls) == 1
         tc = msg.tool_calls[0]
@@ -219,20 +223,24 @@ class TestToolCallParsing:
 
     def test_missing_tool_name(self):
         with pytest.raises(ValueError, match="missing 'tool_name'"):
-            JSONParser().parse([
-                {
-                    "role": "assistant",
-                    "tool_calls": [{"arguments": {"q": "test"}}],
-                }
-            ])
+            JSONParser().parse(
+                [
+                    {
+                        "role": "assistant",
+                        "tool_calls": [{"arguments": {"q": "test"}}],
+                    }
+                ]
+            )
 
     def test_tool_call_defaults(self):
-        trace = JSONParser().parse([
-            {
-                "role": "assistant",
-                "tool_calls": [{"tool_name": "noop"}],
-            }
-        ])
+        trace = JSONParser().parse(
+            [
+                {
+                    "role": "assistant",
+                    "tool_calls": [{"tool_name": "noop"}],
+                }
+            ]
+        )
         tc = trace.messages[0].tool_calls[0]
         assert tc.arguments == {}
         assert tc.result is None

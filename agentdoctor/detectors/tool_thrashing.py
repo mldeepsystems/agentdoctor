@@ -54,9 +54,7 @@ def _serialize_args(arguments: dict[str, Any]) -> set[str]:
     return tokens
 
 
-def _pairwise_similar(
-    calls: list[_IndexedCall], threshold: float
-) -> list[_IndexedCall]:
+def _pairwise_similar(calls: list[_IndexedCall], threshold: float) -> list[_IndexedCall]:
     """Find the largest cluster of mutually similar calls.
 
     Two calls are similar if their serialized argument token sets have a
@@ -140,8 +138,7 @@ class ToolThrashingDetector(BaseDetector):
             raise ValueError(f"min_repeats must be >= 2, got {min_repeats}")
         if not 0.0 <= similarity_threshold <= 1.0:
             raise ValueError(
-                f"similarity_threshold must be between 0.0 and 1.0, "
-                f"got {similarity_threshold}"
+                f"similarity_threshold must be between 0.0 and 1.0, got {similarity_threshold}"
             )
         if window_size < 1:
             raise ValueError(f"window_size must be >= 1, got {window_size}")
@@ -186,9 +183,7 @@ class ToolThrashingDetector(BaseDetector):
                 if len(window) < self.min_repeats:
                     continue
                 cluster = _pairwise_similar(window, self.similarity_threshold)
-                if len(cluster) >= self.min_repeats and len(cluster) > len(
-                    worst_cluster
-                ):
+                if len(cluster) >= self.min_repeats and len(cluster) > len(worst_cluster):
                     worst_cluster = cluster
                     worst_tool = tool_name
 

@@ -26,9 +26,7 @@ class TestBaseDetector:
     def test_partial_subclass_only_detect(self):
         class OnlyDetect(BaseDetector):
             def detect(self, trace: Trace) -> DetectorResult:
-                return DetectorResult(
-                    pathology=Pathology.TOOL_THRASHING, detected=False
-                )
+                return DetectorResult(pathology=Pathology.TOOL_THRASHING, detected=False)
 
         with pytest.raises(TypeError):
             OnlyDetect()
