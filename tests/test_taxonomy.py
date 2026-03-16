@@ -30,6 +30,14 @@ class TestPathologyEnum:
         assert Pathology.CONTEXT_EROSION.value == "context_erosion"
         assert Pathology("context_erosion") is Pathology.CONTEXT_EROSION
 
+    def test_invalid_value_raises(self):
+        with pytest.raises(ValueError):
+            Pathology("invalid_value")
+
+    def test_value_round_trips_for_all_members(self):
+        for member in Pathology:
+            assert Pathology(member.value) is member
+
 
 class TestPathologyRegistry:
     def test_registry_covers_all_pathologies(self):
@@ -57,3 +65,7 @@ class TestPathologyInfo:
     def test_info_type(self):
         info = PATHOLOGY_REGISTRY[Pathology.TOOL_THRASHING]
         assert isinstance(info, PathologyInfo)
+
+    def test_registry_is_immutable(self):
+        with pytest.raises(TypeError):
+            PATHOLOGY_REGISTRY[Pathology.CONTEXT_EROSION] = "overwritten"

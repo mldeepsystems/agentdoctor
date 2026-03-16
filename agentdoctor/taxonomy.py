@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from types import MappingProxyType
 
 
 class Pathology(str, Enum):
@@ -27,7 +28,9 @@ class PathologyInfo:
     mast_mapping: str
 
 
-PATHOLOGY_REGISTRY: dict[Pathology, PathologyInfo] = {
+__all__ = ["Pathology", "PathologyInfo", "PATHOLOGY_REGISTRY"]
+
+PATHOLOGY_REGISTRY: MappingProxyType[Pathology, PathologyInfo] = MappingProxyType({
     Pathology.CONTEXT_EROSION: PathologyInfo(
         pathology=Pathology.CONTEXT_EROSION,
         name="Context Erosion",
@@ -98,4 +101,4 @@ PATHOLOGY_REGISTRY: dict[Pathology, PathologyInfo] = {
         owasp_mapping="OWASP Agentic Top 10: A10 — Misaligned Behaviours & Emergent Misuse",
         mast_mapping="MAST: Output Quality — progressive decline in response quality",
     ),
-}
+})
