@@ -8,7 +8,7 @@ import tempfile
 
 import pytest
 
-from agentdoctor.models import Message, Role, ToolCall, Trace
+from agentdoctor.models import Role, ToolCall, Trace
 from agentdoctor.parsers import BaseParser, JSONParser
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "traces")
