@@ -50,6 +50,20 @@ class TestBaseParser:
             finally:
                 os.unlink(f.name)
 
+    def test_load_file_utf8_content(self):
+        """Verify _load_file reads UTF-8 encoded content correctly."""
+        data = {"messages": [], "note": "caf\u00e9 \u2014 \u00fc\u00f1\u00efc\u00f6d\u00e9"}
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
+            json.dump(data, f, ensure_ascii=False)
+            f.flush()
+            try:
+                loaded = BaseParser._load_file(f.name)
+                assert loaded["note"] == "caf\u00e9 \u2014 \u00fc\u00f1\u00efc\u00f6d\u00e9"
+            finally:
+                os.unlink(f.name)
+
 
 # ---------- JSONParser: file input ----------
 

@@ -24,19 +24,16 @@ class JSONParser(BaseParser):
     def parse(self, source: str | dict | list) -> Trace:
         if isinstance(source, str):
             data = self._load_file(source)
-            return self._parse_data(data)
+            if isinstance(data, list):
+                return self._parse_messages(data)
+            if isinstance(data, dict):
+                return self._parse_dict(data)
+            raise TypeError(f"Unsupported JSON root type: {type(data).__name__}")
         if isinstance(source, dict):
             return self._parse_dict(source)
         if isinstance(source, list):
             return self._parse_messages(source)
         raise TypeError(f"Unsupported source type: {type(source).__name__}")
-
-    def _parse_data(self, data: dict | list) -> Trace:
-        if isinstance(data, list):
-            return self._parse_messages(data)
-        if isinstance(data, dict):
-            return self._parse_dict(data)
-        raise TypeError(f"Unsupported JSON root type: {type(data).__name__}")
 
     def _parse_dict(self, data: dict) -> Trace:
         if "messages" not in data:
