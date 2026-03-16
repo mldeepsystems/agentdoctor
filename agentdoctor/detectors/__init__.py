@@ -3,4 +3,7 @@
 from agentdoctor.detectors.base import BaseDetector
 from agentdoctor.detectors.tool_thrashing import ToolThrashingDetector
 
-__all__ = ["BaseDetector", "ToolThrashingDetector"]
+ALL_DETECTORS: list[type[BaseDetector]] = [ToolThrashingDetector]
+"""Detector classes registered for default use by :class:`Diagnoser`."""
+
+__all__ = ["ALL_DETECTORS", "BaseDetector", "ToolThrashingDetector"]
