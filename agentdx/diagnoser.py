@@ -1,10 +1,10 @@
-"""Diagnoser orchestrator for AgentDoctor."""
+"""Diagnoser orchestrator for agentdx."""
 
 from __future__ import annotations
 
-from agentdoctor.detectors import ALL_DETECTORS, BaseDetector
-from agentdoctor.models import DetectorResult, Severity, Trace
-from agentdoctor.report import DiagnosticReport
+from agentdx.detectors import ALL_DETECTORS, BaseDetector
+from agentdx.models import DetectorResult, Severity, Trace
+from agentdx.report import DiagnosticReport
 
 
 class Diagnoser:

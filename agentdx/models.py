@@ -1,4 +1,4 @@
-"""Core data models for AgentDoctor traces and diagnostics."""
+"""Core data models for agentdx traces and diagnostics."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from agentdoctor.taxonomy import Pathology
+from agentdx.taxonomy import Pathology
 
 
 class Role(str, Enum):

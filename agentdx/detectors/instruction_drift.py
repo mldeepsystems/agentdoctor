@@ -1,11 +1,11 @@
-"""Instruction Drift detector for AgentDoctor."""
+"""Instruction Drift detector for agentdx."""
 
 from __future__ import annotations
 
-from agentdoctor._text_utils import extract_key_terms, simple_linear_regression, term_overlap
-from agentdoctor.detectors.base import BaseDetector
-from agentdoctor.models import DetectorResult, Role, Severity, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx._text_utils import extract_key_terms, simple_linear_regression, term_overlap
+from agentdx.detectors.base import BaseDetector
+from agentdx.models import DetectorResult, Role, Severity, Trace
+from agentdx.taxonomy import Pathology
 
 
 class InstructionDriftDetector(BaseDetector):

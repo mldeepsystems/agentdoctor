@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from agentdoctor.detectors import ALL_DETECTORS
-from agentdoctor.detectors.base import BaseDetector
-from agentdoctor.diagnoser import Diagnoser
-from agentdoctor.models import DetectorResult, Severity, Trace
-from agentdoctor.parsers import JSONParser
-from agentdoctor.report import DiagnosticReport
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors import ALL_DETECTORS
+from agentdx.detectors.base import BaseDetector
+from agentdx.diagnoser import Diagnoser
+from agentdx.models import DetectorResult, Severity, Trace
+from agentdx.parsers import JSONParser
+from agentdx.report import DiagnosticReport
+from agentdx.taxonomy import Pathology
 
 
 # ---------------------------------------------------------------------------
@@ -200,13 +200,13 @@ class TestEndToEnd:
 
 class TestImports:
     def test_import_from_top_level(self):
-        from agentdoctor import Diagnoser, DiagnosticReport
+        from agentdx import Diagnoser, DiagnosticReport
 
         assert Diagnoser is not None
         assert DiagnosticReport is not None
 
     def test_all_detectors_exported(self):
-        from agentdoctor import ALL_DETECTORS
+        from agentdx import ALL_DETECTORS
 
         assert isinstance(ALL_DETECTORS, tuple)
         assert len(ALL_DETECTORS) >= 1

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentdoctor.detectors.silent_degradation import SilentDegradationDetector, _quality_score
-from agentdoctor.models import Message, Role, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors.silent_degradation import SilentDegradationDetector, _quality_score
+from agentdx.models import Message, Role, Trace
+from agentdx.taxonomy import Pathology
 
 
 def _msg(role: Role, content: str, step: int | None = None) -> Message:
@@ -212,11 +212,11 @@ class TestConfig:
 
 class TestImports:
     def test_import_from_detectors(self):
-        from agentdoctor.detectors import SilentDegradationDetector
+        from agentdx.detectors import SilentDegradationDetector
 
         assert SilentDegradationDetector is not None
 
     def test_import_from_top_level(self):
-        from agentdoctor import SilentDegradationDetector
+        from agentdx import SilentDegradationDetector
 
         assert SilentDegradationDetector is not None

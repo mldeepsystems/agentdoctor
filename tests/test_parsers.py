@@ -8,8 +8,8 @@ import tempfile
 
 import pytest
 
-from agentdoctor.models import Role, ToolCall, Trace
-from agentdoctor.parsers import BaseParser, JSONParser
+from agentdx.models import Role, ToolCall, Trace
+from agentdx.parsers import BaseParser, JSONParser
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "traces")
 HEALTHY_TRACE = os.path.join(FIXTURES_DIR, "healthy_trace.json")

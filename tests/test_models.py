@@ -1,6 +1,6 @@
 import pytest
 
-from agentdoctor.models import (
+from agentdx.models import (
     DetectorResult,
     Message,
     Role,
@@ -8,7 +8,7 @@ from agentdoctor.models import (
     ToolCall,
     Trace,
 )
-from agentdoctor.taxonomy import Pathology
+from agentdx.taxonomy import Pathology
 
 
 class TestEnums:

@@ -6,7 +6,7 @@ from types import MappingProxyType
 
 
 class Pathology(str, Enum):
-    """The seven operational failure pathologies detected by AgentDoctor."""
+    """The seven operational failure pathologies detected by agentdx."""
 
     CONTEXT_EROSION = "context_erosion"
     TOOL_THRASHING = "tool_thrashing"

@@ -1,4 +1,4 @@
-"""Diagnostic report for AgentDoctor analysis results."""
+"""Diagnostic report for agentdx analysis results."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import json
 from dataclasses import dataclass, field
 from typing import Any
 
-from agentdoctor.models import DetectorResult, Severity
-from agentdoctor.taxonomy import PATHOLOGY_REGISTRY
+from agentdx.models import DetectorResult, Severity
+from agentdx.taxonomy import PATHOLOGY_REGISTRY
 
 _SEVERITY_ORDER: tuple[Severity, ...] = tuple(Severity)
 
@@ -47,7 +47,7 @@ class DiagnosticReport:
     def summary(self) -> str:
         """Return a human-readable summary string."""
         lines: list[str] = [
-            "AgentDoctor Diagnostic Report",
+            "agentdx Diagnostic Report",
             f"Trace: {self.trace_id or 'unknown'}",
         ]
 
@@ -115,7 +115,7 @@ class DiagnosticReport:
         When *path* is given, the Markdown is also written to that file.
         """
         lines: list[str] = [
-            "# AgentDoctor Diagnostic Report",
+            "# agentdx Diagnostic Report",
             "",
             f"**Trace:** {self.trace_id or 'unknown'}",
         ]

@@ -1,13 +1,13 @@
 cff-version: 1.2.0
-title: "AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability"
-message: "If you use AgentDoctor in your research, please cite it using this metadata."
+title: "agentdx: An Open-Source Diagnostic SDK for AI Agent Reliability"
+message: "If you use agentdx in your research, please cite it using this metadata."
 type: software
 authors:
   - given-names: Anmol
     family-names: Parimoo
     affiliation: MLDeep Systems
     orcid: https://orcid.org/0009-0005-8581-6619
-repository-code: "https://github.com/mldeepsystems/agentdoctor"
+repository-code: "https://github.com/mldeepsystems/agentdx"
 url: "https://mldeep.io/research"
 license: MIT
 version: 0.1.0
@@ -22,7 +22,7 @@ keywords:
   - owasp
   - multi-agent-systems
 abstract: >-
-  AgentDoctor is a framework-agnostic diagnostic SDK for detecting
+  agentdx is a framework-agnostic diagnostic SDK for detecting
   failure pathologies in AI agent systems. It provides a three-tier
   detection architecture (rule-based, ML classifier, LLM-as-judge)
   for identifying seven operational failure modes including context

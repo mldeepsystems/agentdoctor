@@ -1,11 +1,11 @@
-"""Base parser interface for AgentDoctor trace parsers."""
+"""Base parser interface for agentdx trace parsers."""
 
 from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
 
-from agentdoctor.models import Trace
+from agentdx.models import Trace
 
 
 class BaseParser(ABC):

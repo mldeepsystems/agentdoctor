@@ -1,11 +1,11 @@
-"""JSON trace parser for AgentDoctor."""
+"""JSON trace parser for agentdx."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from agentdoctor.models import Message, Role, ToolCall, Trace
-from agentdoctor.parsers.base import BaseParser
+from agentdx.models import Message, Role, ToolCall, Trace
+from agentdx.parsers.base import BaseParser
 
 _ROLE_MAP: dict[str, Role] = {r.value: r for r in Role}
 

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from agentdoctor.detectors.hallucinated_tool_success import HallucinatedToolSuccessDetector
-from agentdoctor.models import Message, Role, Severity, ToolCall, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors.hallucinated_tool_success import HallucinatedToolSuccessDetector
+from agentdx.models import Message, Role, Severity, ToolCall, Trace
+from agentdx.taxonomy import Pathology
 
 
 def _msg(role: Role, content: str, step: int | None = None, tool_calls=None) -> Message:
@@ -241,11 +241,11 @@ class TestSeverity:
 
 class TestImports:
     def test_import_from_detectors(self):
-        from agentdoctor.detectors import HallucinatedToolSuccessDetector
+        from agentdx.detectors import HallucinatedToolSuccessDetector
 
         assert HallucinatedToolSuccessDetector is not None
 
     def test_import_from_top_level(self):
-        from agentdoctor import HallucinatedToolSuccessDetector
+        from agentdx import HallucinatedToolSuccessDetector
 
         assert HallucinatedToolSuccessDetector is not None

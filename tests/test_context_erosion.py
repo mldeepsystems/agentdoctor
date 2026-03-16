@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from agentdoctor.detectors.context_erosion import ContextErosionDetector
-from agentdoctor.models import Message, Role, Severity, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx.detectors.context_erosion import ContextErosionDetector
+from agentdx.models import Message, Role, Severity, Trace
+from agentdx.taxonomy import Pathology
 
 
 def _msg(role: Role, content: str, step: int | None = None) -> Message:
@@ -190,11 +190,11 @@ class TestSeverity:
 
 class TestImports:
     def test_import_from_detectors(self):
-        from agentdoctor.detectors import ContextErosionDetector
+        from agentdx.detectors import ContextErosionDetector
 
         assert ContextErosionDetector is not None
 
     def test_import_from_top_level(self):
-        from agentdoctor import ContextErosionDetector
+        from agentdx import ContextErosionDetector
 
         assert ContextErosionDetector is not None

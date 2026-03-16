@@ -1,27 +1,27 @@
-# AgentDoctor
+# agentdx
 
 **Open-source diagnostic SDK for detecting failure pathologies in AI agent systems.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI](https://img.shields.io/pypi/v/agentdoctor.svg)](https://pypi.org/project/agentdoctor/)
+[![PyPI](https://img.shields.io/pypi/v/agentdx.svg)](https://pypi.org/project/agentdx/)
 
 ---
 
-AgentDoctor detects operational failure modes in AI agent systems — the kind of failures that observability tools miss because they happen at the reasoning level, not the infrastructure level. It analyses agent execution traces and produces structured diagnostic reports identifying specific pathologies.
+agentdx detects operational failure modes in AI agent systems — the kind of failures that observability tools miss because they happen at the reasoning level, not the infrastructure level. It analyses agent execution traces and produces structured diagnostic reports identifying specific pathologies.
 
-## Why AgentDoctor?
+## Why agentdx?
 
-Existing agent observability tools (LangSmith, Arize, Datadog LLM) excel at **tracing**: they show you what happened. AgentDoctor does **diagnosis**: it tells you what went wrong and why.
+Existing agent observability tools (LangSmith, Arize, Datadog LLM) excel at **tracing**: they show you what happened. agentdx does **diagnosis**: it tells you what went wrong and why.
 
 | Tool Type | What it answers | Examples |
 |-----------|----------------|---------|
 | Tracing / Observability | "What calls did the agent make?" | LangSmith, Arize, Datadog |
-| **Diagnostics** | **"Why did the agent fail?"** | **AgentDoctor** |
+| **Diagnostics** | **"Why did the agent fail?"** | **agentdx** |
 
 ## The Seven Pathologies
 
-AgentDoctor detects seven operational failure modes, designed to align with the [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/) and [UC Berkeley's MAST framework](https://arxiv.org/abs/2503.13657):
+agentdx detects seven operational failure modes, designed to align with the [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/) and [UC Berkeley's MAST framework](https://arxiv.org/abs/2503.13657):
 
 | Pathology | What it means |
 |-----------|--------------|
@@ -36,18 +36,17 @@ AgentDoctor detects seven operational failure modes, designed to align with the 
 ## Quick Start
 
 ```bash
-pip install agentdoctor
+pip install agentdx
 ```
 
 ```python
-from agentdoctor import Diagnoser
-from agentdoctor.parsers import LangChainParser
+from agentdx import Diagnoser, JSONParser
 
-# Parse an agent execution trace
-parser = LangChainParser()
+# Parse an agent execution trace (file path, dict, or message list)
+parser = JSONParser()
 trace = parser.parse("path/to/trace.json")
 
-# Run diagnostics
+# Run all detectors
 diagnoser = Diagnoser()
 report = diagnoser.diagnose(trace)
 
@@ -57,9 +56,32 @@ report.to_json("diagnostic_report.json")
 report.to_markdown("diagnostic_report.md")
 ```
 
+The trace file is a JSON object with a `messages` array. Each message has a `role`, `content`, and optional `tool_calls`:
+
+```json
+{
+  "trace_id": "my-trace",
+  "messages": [
+    {"role": "user", "content": "Find the best Python testing framework."},
+    {
+      "role": "assistant",
+      "content": "Let me search for that.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {"query": "best Python testing framework"},
+          "result": "No relevant results found.",
+          "success": true
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Architecture
 
-AgentDoctor uses a three-tier detection architecture:
+agentdx uses a three-tier detection architecture:
 
 ```
 Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
@@ -80,9 +102,9 @@ Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
 
 | Framework | Parser | Status |
 |-----------|--------|--------|
-| LangChain / LangGraph | `LangChainParser` | v0.1.0 |
-| CrewAI | `CrewAIParser` | v0.1.0 |
 | Raw JSON traces | `JSONParser` | v0.1.0 |
+| LangChain / LangGraph | `LangChainParser` | Planned |
+| CrewAI | `CrewAIParser` | Planned |
 | AutoGen / AG2 | `AutoGenParser` | Planned |
 | OpenAI Agents SDK | `OpenAIAgentParser` | Planned |
 
@@ -93,7 +115,7 @@ Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
 
 ## Research
 
-AgentDoctor is developed by [MLDeep Systems](https://mldeep.io), an AI and data consulting firm specialising in agent reliability.
+agentdx is developed by [MLDeep Systems](https://mldeep.io), an AI and data consulting firm specialising in agent reliability.
 
 Related publications:
 
@@ -110,14 +132,14 @@ We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Citation
 
-If you use AgentDoctor in your research, please cite:
+If you use agentdx in your research, please cite:
 
 ```bibtex
-@software{mldeepsystemsagentdoctor,
+@software{mldeepsystemsagentdx,
   author    = {Parimoo, Anmol},
-  title     = {AgentDoctor: An Open-Source Diagnostic SDK for AI Agent Reliability},
+  title     = {agentdx: An Open-Source Diagnostic SDK for AI Agent Reliability},
   year      = {2026},
-  url       = {https://github.com/mldeepsystems/agentdoctor},
+  url       = {https://github.com/mldeepsystems/agentdx},
   license   = {MIT}
 }
 ```

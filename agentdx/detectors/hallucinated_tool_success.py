@@ -1,13 +1,13 @@
-"""Hallucinated Tool Success detector for AgentDoctor."""
+"""Hallucinated Tool Success detector for agentdx."""
 
 from __future__ import annotations
 
 import re
 
-from agentdoctor._text_utils import contains_error_signals
-from agentdoctor.detectors.base import BaseDetector
-from agentdoctor.models import DetectorResult, Role, Severity, Trace
-from agentdoctor.taxonomy import Pathology
+from agentdx._text_utils import contains_error_signals
+from agentdx.detectors.base import BaseDetector
+from agentdx.models import DetectorResult, Role, Severity, Trace
+from agentdx.taxonomy import Pathology
 
 _UNKNOWN_STEP: int = -1
 

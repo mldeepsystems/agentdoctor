@@ -6,9 +6,9 @@ import json
 import os
 import tempfile
 
-from agentdoctor.models import DetectorResult, Severity
-from agentdoctor.report import DiagnosticReport, _SEVERITY_ORDER
-from agentdoctor.taxonomy import Pathology
+from agentdx.models import DetectorResult, Severity
+from agentdx.report import DiagnosticReport, _SEVERITY_ORDER
+from agentdx.taxonomy import Pathology
 
 
 def _make_result(
@@ -242,7 +242,7 @@ class TestToMarkdown:
             results=[_make_result(Pathology.TOOL_THRASHING, detected=True)],
         )
         md = report.to_markdown()
-        assert "# AgentDoctor Diagnostic Report" in md
+        assert "# agentdx Diagnostic Report" in md
 
     def test_contains_summary_table(self):
         report = DiagnosticReport(
@@ -303,7 +303,7 @@ class TestToMarkdown:
             report.to_markdown(path)
             with open(path, encoding="utf-8") as f:
                 content = f.read()
-            assert "# AgentDoctor Diagnostic Report" in content
+            assert "# agentdx Diagnostic Report" in content
         finally:
             os.unlink(path)
 

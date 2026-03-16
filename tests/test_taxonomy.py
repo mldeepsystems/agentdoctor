@@ -2,7 +2,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from agentdoctor.taxonomy import Pathology, PathologyInfo, PATHOLOGY_REGISTRY
+from agentdx.taxonomy import Pathology, PathologyInfo, PATHOLOGY_REGISTRY
 
 
 class TestPathologyEnum:
