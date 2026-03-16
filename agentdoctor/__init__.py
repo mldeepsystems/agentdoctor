@@ -13,13 +13,14 @@ from agentdoctor.models import (
     ToolCall,
     Trace,
 )
-from agentdoctor.detectors import BaseDetector
+from agentdoctor.detectors import BaseDetector, ToolThrashingDetector
 from agentdoctor.parsers import BaseParser, JSONParser
 from agentdoctor.taxonomy import PATHOLOGY_REGISTRY, Pathology
 
 __all__ = [
     "BaseDetector",
     "BaseParser",
+    "ToolThrashingDetector",
     "DetectorResult",
     "JSONParser",
     "Message",
