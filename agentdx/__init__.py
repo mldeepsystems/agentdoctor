@@ -3,7 +3,7 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("agentdx")
 except PackageNotFoundError:
-    __version__ = "0.1.0a2"  # fallback for uninstalled usage
+    __version__ = "0.1.0a3"  # fallback for uninstalled usage
 
 from agentdx.models import (
     DetectorResult,

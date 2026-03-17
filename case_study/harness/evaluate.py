@@ -9,7 +9,7 @@ from pathlib import Path
 
 from agentdx import Diagnoser, JSONParser, Pathology, __version__
 
-EXPECTED_VERSION = "0.1.0a2"
+EXPECTED_VERSION = "0.1.0a3"
 
 ALL_PATHOLOGY_KEYS = [p.value for p in Pathology]
 

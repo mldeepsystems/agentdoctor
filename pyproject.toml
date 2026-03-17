@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentdx"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = "Open-source diagnostic SDK for detecting failure pathologies in AI agent systems"
 readme = "README.md"
 license = "MIT"
