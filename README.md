@@ -98,6 +98,22 @@ Trace Input → Parser → Normalised Trace → Detectors → Diagnostic Report
 
 **Tier 3 — LLM-as-Judge** (planned): Asynchronous LLM evaluation for complex, context-dependent pathology detection.
 
+## Evaluation
+
+We validated the Tier 1 detectors against 42 synthetic agent traces covering all 7 pathologies. The evaluation is a **development validation** — it confirms detectors fire on intended patterns, not that they generalise to production traces.
+
+**What the evaluation shows:**
+- Detectors correctly identify the target pathology in traces designed to exhibit it
+- Cross-detector interference reveals that agent failures cluster (e.g., Recovery Blindness and Hallucinated Tool Success co-fire on failed tool calls)
+- One known false negative (gh_03): a cooking assistant answering quantum physics questions — topic shifts without injection keywords are invisible to rule-based detection
+
+**What it does not show:**
+- Performance on production or adversarial traces (all traces are synthetic)
+- Statistical significance (3–6 traces per detector; 95% CI for 3/3 recall is [0.29, 1.00])
+- Comparison against baselines or alternative approaches
+
+agentdx is best used as a **debugging aid during agent development**. See [`case_study/walkthrough.ipynb`](case_study/walkthrough.ipynb) for the full evaluation with dual metrics, confidence intervals, and per-detector analysis.
+
 ## Supported Frameworks
 
 | Framework | Parser | Status |
