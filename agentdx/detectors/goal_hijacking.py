@@ -29,21 +29,40 @@ class GoalHijackingDetector(BaseDetector):
     """Detect when an agent's objective is altered by adversarial input.
 
     Scans user messages and tool results for prompt injection patterns,
-    then checks whether the agent's behavior shifts after the suspected
-    injection.
+    then optionally checks for drastic topic shifts between consecutive
+    user messages.
+
+    By default only injection-pattern detection is active.  Topic-shift
+    detection can be enabled via ``detect_topic_shifts=True``.
 
     Args:
         topic_shift_threshold: Minimum Jaccard similarity between
             consecutive user messages.  A drop below this indicates
-            a drastic topic shift.  Defaults to ``0.1``.
+            a drastic topic shift.  Defaults to ``0.4``.
+        detect_topic_shifts: Whether to enable topic-shift detection
+            in addition to injection-pattern scanning.  Defaults to
+            ``False``.
+        min_consecutive_shifts: Number of consecutive low-similarity
+            user-message pairs required to flag a topic shift (only
+            used when *detect_topic_shifts* is ``True``).  Defaults
+            to ``3``.
     """
 
-    def __init__(self, topic_shift_threshold: float = 0.1) -> None:
+    def __init__(
+        self,
+        topic_shift_threshold: float = 0.4,
+        detect_topic_shifts: bool = False,
+        min_consecutive_shifts: int = 3,
+    ) -> None:
         if not 0.0 <= topic_shift_threshold <= 1.0:
             raise ValueError(
                 f"topic_shift_threshold must be between 0.0 and 1.0, got {topic_shift_threshold}"
             )
+        if min_consecutive_shifts < 1:
+            raise ValueError(f"min_consecutive_shifts must be >= 1, got {min_consecutive_shifts}")
         self._topic_shift_threshold = topic_shift_threshold
+        self._detect_topic_shifts = detect_topic_shifts
+        self._min_consecutive_shifts = min_consecutive_shifts
 
     @property
     def pathology(self) -> Pathology:
@@ -78,28 +97,42 @@ class GoalHijackingDetector(BaseDetector):
                         )
                     )
 
-        # 3. Detect drastic topic shifts in user messages
-        user_msgs = [m for m in messages if m.role is Role.USER]
-        if len(user_msgs) >= 2:
-            first_terms = extract_key_terms(user_msgs[0].content)
-            for i in range(1, len(user_msgs)):
-                current_terms = extract_key_terms(user_msgs[i].content)
-                prev_terms = extract_key_terms(user_msgs[i - 1].content)
-                if prev_terms and current_terms:
-                    sim = term_overlap(prev_terms, current_terms)
-                    # Also check against original goal
-                    goal_sim = term_overlap(first_terms, current_terms) if first_terms else 1.0
-                    if (
-                        sim < self._topic_shift_threshold
-                        and goal_sim < self._topic_shift_threshold
-                    ):
-                        step = (
-                            user_msgs[i].step_index
-                            if user_msgs[i].step_index is not None
-                            else _UNKNOWN_STEP
-                        )
+        # 3. Detect drastic topic shifts in user messages (opt-in)
+        if self._detect_topic_shifts:
+            user_msgs = [m for m in messages if m.role is Role.USER]
+            if len(user_msgs) >= 2:
+                first_terms = extract_key_terms(user_msgs[0].content)
+                # Collect per-pair shift flags
+                shift_flags: list[tuple[int, float, int]] = []  # (index, sim, step)
+                for i in range(1, len(user_msgs)):
+                    current_terms = extract_key_terms(user_msgs[i].content)
+                    prev_terms = extract_key_terms(user_msgs[i - 1].content)
+                    if prev_terms and current_terms:
+                        sim = term_overlap(prev_terms, current_terms)
+                        goal_sim = term_overlap(first_terms, current_terms) if first_terms else 1.0
+                        if (
+                            sim < self._topic_shift_threshold
+                            and goal_sim < self._topic_shift_threshold
+                        ):
+                            step = (
+                                user_msgs[i].step_index
+                                if user_msgs[i].step_index is not None
+                                else _UNKNOWN_STEP
+                            )
+                            shift_flags.append((i, sim, step))
+
+                # Require min_consecutive_shifts consecutive shifted pairs
+                for run in self._find_consecutive_runs(
+                    [f[0] for f in shift_flags], self._min_consecutive_shifts
+                ):
+                    for idx in run:
+                        entry = next(f for f in shift_flags if f[0] == idx)
                         findings.append(
-                            (step, "topic shift", f"Drastic topic shift (similarity={sim:.2f})")
+                            (
+                                entry[2],
+                                "topic shift",
+                                f"Drastic topic shift (similarity={entry[1]:.2f})",
+                            )
                         )
 
         if not findings:
@@ -134,3 +167,20 @@ class GoalHijackingDetector(BaseDetector):
                 "Consider input sanitization and instruction anchoring."
             ),
         )
+
+    @staticmethod
+    def _find_consecutive_runs(indices: list[int], min_length: int) -> list[list[int]]:
+        """Return groups of *indices* that form consecutive integer runs.
+
+        Only runs of length >= *min_length* are returned.
+        """
+        if not indices:
+            return []
+        sorted_idx = sorted(indices)
+        runs: list[list[int]] = [[sorted_idx[0]]]
+        for i in range(1, len(sorted_idx)):
+            if sorted_idx[i] == sorted_idx[i - 1] + 1:
+                runs[-1].append(sorted_idx[i])
+            else:
+                runs.append([sorted_idx[i]])
+        return [r for r in runs if len(r) >= min_length]

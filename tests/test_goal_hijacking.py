@@ -71,7 +71,7 @@ def _normal_trace() -> Trace:
 
 
 def _topic_shift_trace() -> Trace:
-    """Trace with drastic topic shift but no injection pattern."""
+    """Trace with multiple drastic topic shifts but no injection pattern."""
     return Trace(
         trace_id="shift-1",
         messages=[
@@ -92,6 +92,18 @@ def _topic_shift_trace() -> Trace:
                 step=3,
             ),
             _msg(Role.ASSISTANT, "Sure, here's a haiku about jellyfish.", step=4),
+            _msg(
+                Role.USER,
+                "Now tell me about the history of ancient Egyptian pyramids.",
+                step=5,
+            ),
+            _msg(Role.ASSISTANT, "The pyramids were built thousands of years ago.", step=6),
+            _msg(
+                Role.USER,
+                "What's your favorite recipe for chocolate cake with frosting?",
+                step=7,
+            ),
+            _msg(Role.ASSISTANT, "Here's a great chocolate cake recipe.", step=8),
         ],
     )
 
@@ -168,11 +180,60 @@ class TestTrueNegative:
 
 
 class TestTopicShift:
-    def test_drastic_shift_detected(self):
+    def test_topic_shift_not_detected_by_default(self):
+        """Single topic shift is NOT detected with default settings (injection-only)."""
         result = GoalHijackingDetector().detect(_topic_shift_trace())
+        assert result.detected is False
+
+    def test_topic_shift_opt_in(self):
+        """Consecutive topic shifts detected when opt-in is enabled."""
+        detector = GoalHijackingDetector(
+            detect_topic_shifts=True,
+            min_consecutive_shifts=1,
+        )
+        result = detector.detect(_topic_shift_trace())
         assert result.detected is True
         evidence_text = " ".join(result.evidence)
         assert "topic shift" in evidence_text.lower()
+
+    def test_injection_detected_by_default(self):
+        """Injection is detected even without topic shift detection."""
+        result = GoalHijackingDetector().detect(_injection_trace())
+        assert result.detected is True
+        evidence_text = " ".join(result.evidence)
+        assert "Injection pattern" in evidence_text
+
+    def test_topic_shift_requires_consecutive(self):
+        """Single isolated shift not flagged when min_consecutive_shifts=2."""
+        # 3 user messages: A, A, B — only the last pair (A→B) shifts.
+        # With min_consecutive_shifts=2, one shift pair is not enough.
+        trace = Trace(
+            trace_id="shift-isolated",
+            messages=[
+                _msg(Role.SYSTEM, "You are a math tutor.", step=0),
+                _msg(Role.USER, "Explain algebra equations and variables.", step=1),
+                _msg(Role.ASSISTANT, "Algebra involves equations.", step=2),
+                _msg(
+                    Role.USER,
+                    "Solve more algebra equations with variables and polynomials.",
+                    step=3,
+                ),
+                _msg(Role.ASSISTANT, "Here is how to solve polynomials.", step=4),
+                _msg(
+                    Role.USER,
+                    "Tell me about jellyfish biology and marine ecosystems.",
+                    step=5,
+                ),
+                _msg(Role.ASSISTANT, "Jellyfish are fascinating creatures.", step=6),
+            ],
+        )
+        detector = GoalHijackingDetector(
+            detect_topic_shifts=True,
+            min_consecutive_shifts=2,
+        )
+        result = detector.detect(trace)
+        # Only 1 pair shifts (pair 2: algebra→jellyfish), not enough
+        assert result.detected is False
 
 
 class TestConfig:
@@ -183,6 +244,41 @@ class TestConfig:
     def test_invalid_threshold_negative(self):
         with pytest.raises(ValueError):
             GoalHijackingDetector(topic_shift_threshold=-0.1)
+
+    def test_invalid_min_consecutive_shifts(self):
+        with pytest.raises(ValueError):
+            GoalHijackingDetector(min_consecutive_shifts=0)
+
+    def test_invalid_min_consecutive_shifts_negative(self):
+        with pytest.raises(ValueError):
+            GoalHijackingDetector(min_consecutive_shifts=-1)
+
+    def test_detect_topic_shifts_default_false(self):
+        detector = GoalHijackingDetector()
+        assert detector._detect_topic_shifts is False
+
+    def test_default_threshold_is_0_4(self):
+        detector = GoalHijackingDetector()
+        assert detector._topic_shift_threshold == 0.4
+
+
+class TestFindConsecutiveRuns:
+    def test_empty(self):
+        assert GoalHijackingDetector._find_consecutive_runs([], 1) == []
+
+    def test_single_element_min_1(self):
+        assert GoalHijackingDetector._find_consecutive_runs([3], 1) == [[3]]
+
+    def test_single_element_min_2(self):
+        assert GoalHijackingDetector._find_consecutive_runs([3], 2) == []
+
+    def test_consecutive_run(self):
+        result = GoalHijackingDetector._find_consecutive_runs([1, 2, 3], 3)
+        assert result == [[1, 2, 3]]
+
+    def test_split_runs(self):
+        result = GoalHijackingDetector._find_consecutive_runs([1, 2, 5, 6, 7], 2)
+        assert result == [[1, 2], [5, 6, 7]]
 
 
 class TestImports:
