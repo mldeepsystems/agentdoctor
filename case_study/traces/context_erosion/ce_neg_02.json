@@ -1,0 +1,78 @@
+{
+  "trace_id": "ce_neg_02",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Financial advisor agent handles brief off-topic question but consistently returns to financial terminology with dense anchor term usage",
+    "difficulty": "medium"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a financial advisor."
+    },
+    {
+      "role": "user",
+      "content": "I want to talk about my investment portfolio. I have $200,000 roughly split between stocks and bonds."
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, I want to talk through your investment portfolio of $200,000 roughly split between stocks and bonds. This portfolio split between stocks and bonds is the key financial decision for your investment returns."
+    },
+    {
+      "role": "user",
+      "content": "It's 70% stocks and 30% bonds. I'm 45 and want to retire at 65."
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, that stocks and bonds split in your investment portfolio is solid if you want to retire at 65. Roughly 70% stocks and 30% bonds gives your portfolio the growth you want while bonds provide stability for this investment."
+    },
+    {
+      "role": "user",
+      "content": "Should I rebalance my portfolio?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes — as your financial advisor, I want to emphasize that rebalancing your investment portfolio of stocks and bonds is essential. When stocks drift from your roughly 70/30 split, rebalance your portfolio to maintain the investment allocation you want between stocks and bonds."
+    },
+    {
+      "role": "user",
+      "content": "Quick tangent — any easy Italian dinner recipes?"
+    },
+    {
+      "role": "assistant",
+      "content": "A braised short rib ragu over pappardelle is easy and impressive for a dinner party. But as your financial advisor, I want to get back to your investment portfolio — let's talk more about your stocks and bonds split!"
+    },
+    {
+      "role": "user",
+      "content": "Ha, fair. Should I diversify beyond stocks and bonds?"
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, I want to talk about broadening your investment portfolio beyond the roughly even split of stocks and bonds. Adding REITs to your portfolio gives you real estate exposure alongside your stocks and bonds. This investment diversification is what I'd want for any portfolio roughly this size that's currently split only between stocks and bonds."
+    },
+    {
+      "role": "user",
+      "content": "What percentage should go to REITs?"
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, I want to suggest roughly 10% of your investment portfolio in REITs, split from your stocks allocation. Your portfolio would then be roughly 60% stocks, 10% REITs, and 30% bonds — a split your financial advisor would want for a $200,000 investment portfolio of stocks and bonds."
+    },
+    {
+      "role": "user",
+      "content": "What about adding international investments?"
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, I want to talk about adding international stocks and bonds to your investment portfolio. I'd roughly split 15% of your portfolio into international stocks and bonds. Your financial advisor wants your investment portfolio to have this broader split between domestic stocks, international stocks, and bonds."
+    },
+    {
+      "role": "user",
+      "content": "How should I think about fees in my portfolio?"
+    },
+    {
+      "role": "assistant",
+      "content": "As your financial advisor, I want to talk about how fees erode your investment portfolio of stocks and bonds. For your roughly $200,000 portfolio split between stocks and bonds, I want you to target index funds with fees below 0.10%. Your financial advisor wants this investment portfolio of stocks and bonds to grow — not get split away by fees."
+    }
+  ]
+}

@@ -155,7 +155,8 @@ _WORD_SPLIT_RE = re.compile(r"[^a-z]+")
 _ERROR_SIGNALS = re.compile(
     r"error|failed|failure|exception|traceback|timeout|timed\s*out"
     r"|stacktrace|fatal|panic|abort"
-    r"|400|403|404|429|500|502|503|refused|denied|unauthorized|forbidden|not\s*found",
+    r"|(?:HTTP[/ ]*[\d.]*\s*|(?:status|code)\s*:?\s*|:\s*)(?:400|403|404|429|500|502|503)\b"
+    r"|refused|denied|unauthorized|forbidden|not\s*found",
     re.IGNORECASE,
 )
 
@@ -181,6 +182,20 @@ def term_overlap(terms_a: set[str], terms_b: set[str]) -> float:
     intersection = terms_a & terms_b
     union = terms_a | terms_b
     return len(intersection) / len(union)
+
+
+def anchor_recall(anchor_terms: set[str], message_terms: set[str]) -> float:
+    """Fraction of *anchor_terms* present in *message_terms*.
+
+    Unlike :func:`term_overlap` (Jaccard), this is asymmetric: it measures
+    how much of the anchor vocabulary the message still references, without
+    penalising vocabulary expansion in the message.
+
+    Returns ``0.0`` when *anchor_terms* is empty.
+    """
+    if not anchor_terms:
+        return 0.0
+    return len(anchor_terms & message_terms) / len(anchor_terms)
 
 
 def simple_linear_regression(

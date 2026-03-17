@@ -1,6 +1,7 @@
 import pytest
 
 from agentdx._text_utils import (
+    anchor_recall,
     contains_error_signals,
     extract_key_terms,
     simple_linear_regression,
@@ -80,6 +81,35 @@ class TestTermOverlap:
 
     def test_both_empty(self):
         assert term_overlap(set(), set()) == 0.0
+
+
+class TestAnchorRecall:
+    def test_all_present(self):
+        anchor = {"agent", "error", "failed"}
+        message = {"agent", "error", "failed", "extra", "terms"}
+        assert anchor_recall(anchor, message) == 1.0
+
+    def test_none_present(self):
+        anchor = {"agent", "error", "failed"}
+        message = {"totally", "different", "terms"}
+        assert anchor_recall(anchor, message) == 0.0
+
+    def test_partial(self):
+        anchor = {"agent", "error", "failed", "crash"}
+        message = {"agent", "error", "other"}
+        assert anchor_recall(anchor, message) == pytest.approx(0.5)
+
+    def test_empty_anchor(self):
+        assert anchor_recall(set(), {"agent", "error"}) == 0.0
+
+    def test_empty_message(self):
+        assert anchor_recall({"agent", "error"}, set()) == 0.0
+
+    def test_superset_message(self):
+        """Large message with all anchor terms still returns 1.0."""
+        anchor = {"agent", "error"}
+        message = {"agent", "error"} | {f"word{i}" for i in range(50)}
+        assert anchor_recall(anchor, message) == 1.0
 
 
 class TestSimpleLinearRegression:
@@ -169,3 +199,14 @@ class TestContainsErrorSignals:
         # This is intentional — detectors refine context around matches.
         assert contains_error_signals("error_handler class works") is True
         assert contains_error_signals("The failed_jobs table is empty") is True
+
+    def test_numeric_codes_require_context(self):
+        # Bare numbers in normal text should NOT match
+        assert contains_error_signals("achieves 500 Wh/kg energy density") is False
+        assert contains_error_signals("400 researchers participated") is False
+        assert contains_error_signals("built in 1503 AD") is False
+        # Codes with HTTP/status/colon context should match
+        assert contains_error_signals("HTTP 404") is True
+        assert contains_error_signals("status: 503") is True
+        assert contains_error_signals("HTTP/1.1 500 Internal") is True
+        assert contains_error_signals("code: 429") is True

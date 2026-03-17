@@ -1,0 +1,60 @@
+{
+  "trace_id": "rb-neg-01-graceful-weather-error-handling",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Agent correctly acknowledges a weather API failure and provides a graceful fallback response with recovery language",
+    "difficulty": "easy"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful weather assistant. Always acknowledge errors transparently and suggest alternatives when tools fail. Never fabricate data."
+    },
+    {
+      "role": "user",
+      "content": "What's the weather forecast for San Francisco this weekend? I'm planning a hike."
+    },
+    {
+      "role": "assistant",
+      "content": "Let me check the current forecast for San Francisco this weekend.",
+      "tool_calls": [
+        {
+          "tool_name": "weather_api",
+          "arguments": {"location": "San Francisco, CA", "days": 3, "units": "imperial"},
+          "result": "Error: Service temporarily unavailable. The weather data provider is experiencing an outage. Status: 503.",
+          "success": false,
+          "error_message": "Service unavailable (503)"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I apologize, but the weather API returned an error — it appears the service is temporarily unavailable. Let me try an alternative source to get your forecast."
+    },
+    {
+      "role": "assistant",
+      "content": "Let me try a different weather service.",
+      "tool_calls": [
+        {
+          "tool_name": "backup_weather_api",
+          "arguments": {"city": "San Francisco", "state": "CA", "forecast_days": 3},
+          "result": "{\"forecast\": [{\"day\": \"Saturday\", \"high\": 62, \"low\": 48, \"condition\": \"Partly cloudy\", \"precipitation_chance\": 10}, {\"day\": \"Sunday\", \"high\": 58, \"low\": 45, \"condition\": \"Overcast with light rain\", \"precipitation_chance\": 65}]}",
+          "success": true,
+          "error_message": null
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I was able to get the forecast from a backup source. Here's what it looks like for San Francisco this weekend:\n\n**Saturday:** Partly cloudy, high of 62°F, low of 48°F. Only a 10% chance of rain — great hiking weather!\n\n**Sunday:** Overcast with light rain expected, high of 58°F, low of 45°F. There's a 65% chance of precipitation, so I'd recommend planning your hike for Saturday if possible.\n\nFor the hike, I'd suggest bringing layers since mornings near the coast can be chilly even on the nicer day. Would you like trail recommendations?"
+    },
+    {
+      "role": "user",
+      "content": "Saturday sounds perfect. Thanks for the heads up on Sunday!"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! Saturday should be a wonderful day for it. Enjoy your hike — and keep an eye on conditions the morning of, just in case anything shifts. Let me know if you need help picking a trail or packing list!"
+    }
+  ]
+}
