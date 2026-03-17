@@ -112,10 +112,10 @@ class TestTruePositive:
         result = ContextErosionDetector().detect(_eroding_trace())
         assert len(result.evidence) > 0
 
-    def test_evidence_mentions_lost_terms(self):
+    def test_evidence_mentions_decline(self):
         result = ContextErosionDetector().detect(_eroding_trace())
         evidence_text = " ".join(result.evidence)
-        assert "anchor terms" in evidence_text.lower() or "overlap" in evidence_text.lower()
+        assert "drop" in evidence_text.lower() or "recall" in evidence_text.lower()
 
 
 class TestTrueNegative:
@@ -155,12 +155,117 @@ class TestTrueNegative:
         assert result.detected is False
 
 
+class TestTwoGateLogic:
+    def test_low_early_engagement_not_flagged(self):
+        """Agent that never echoed anchor terms should NOT be flagged.
+
+        This is the core fix: you can't lose what you never had.
+        """
+        trace = Trace(
+            trace_id="low-engage",
+            messages=[
+                _msg(
+                    Role.SYSTEM,
+                    "You are a financial advisor specializing in retirement planning.",
+                ),
+                _msg(Role.USER, "What should I invest in?", step=0),
+                # Early responses use general vocabulary, not anchor terms
+                _msg(
+                    Role.ASSISTANT,
+                    "I recommend looking at index funds and bonds for a balanced approach.",
+                    step=1,
+                ),
+                _msg(Role.USER, "What about risk?", step=2),
+                _msg(
+                    Role.ASSISTANT,
+                    "Risk tolerance depends on your age and goals. Consider a mix of assets.",
+                    step=3,
+                ),
+                _msg(Role.USER, "Anything else?", step=4),
+                _msg(
+                    Role.ASSISTANT,
+                    "Yes, regular contributions and compound interest are important.",
+                    step=5,
+                ),
+                _msg(Role.USER, "Thanks", step=6),
+                _msg(
+                    Role.ASSISTANT,
+                    "You're welcome! Let me know if you need anything else.",
+                    step=7,
+                ),
+            ],
+        )
+        result = ContextErosionDetector().detect(trace)
+        assert result.detected is False
+        assert "never demonstrated" in result.description.lower()
+
+    def test_both_high_no_decline(self):
+        """Early and late recall both high — no drop means no erosion."""
+        result = ContextErosionDetector().detect(_healthy_trace())
+        assert result.detected is False
+
+    def test_drop_below_threshold_not_flagged(self):
+        """Modest decline that doesn't reach the threshold is not flagged."""
+        # Use a very high threshold to ensure the eroding trace's drop doesn't reach it
+        detector = ContextErosionDetector(threshold=0.99)
+        result = detector.detect(_eroding_trace())
+        assert result.detected is False
+
+
+class TestVocabularyExpansion:
+    def test_vocabulary_expansion_not_penalized(self):
+        """Message using all anchor terms + many extras should NOT be detected."""
+        extra_words = " ".join(f"extraword{i}" for i in range(50))
+        trace = Trace(
+            trace_id="vocab-expand",
+            messages=[
+                _msg(
+                    Role.SYSTEM,
+                    "You are a financial advisor specializing in retirement planning "
+                    "and portfolio diversification.",
+                ),
+                _msg(
+                    Role.USER,
+                    "Help me plan my retirement portfolio with diversification.",
+                    step=0,
+                ),
+                _msg(
+                    Role.ASSISTANT,
+                    "I'll help with retirement portfolio diversification planning. " + extra_words,
+                    step=1,
+                ),
+                _msg(Role.USER, "What allocation?", step=2),
+                _msg(
+                    Role.ASSISTANT,
+                    "For retirement portfolio diversification with financial planning, "
+                    "I recommend a balanced approach. " + extra_words,
+                    step=3,
+                ),
+                _msg(Role.USER, "International?", step=4),
+                _msg(
+                    Role.ASSISTANT,
+                    "International diversification is important for your retirement "
+                    "portfolio as a financial advisor would recommend. " + extra_words,
+                    step=5,
+                ),
+                _msg(Role.USER, "Bonds?", step=6),
+                _msg(
+                    Role.ASSISTANT,
+                    "Bond allocation supports retirement planning and portfolio "
+                    "diversification as part of financial advisory best practices. " + extra_words,
+                    step=7,
+                ),
+            ],
+        )
+        result = ContextErosionDetector().detect(trace)
+        assert result.detected is False
+
+
 class TestConfig:
     def test_custom_threshold(self):
-        # Very high threshold should detect erosion more aggressively
+        # Very high threshold should make detection harder
         detector = ContextErosionDetector(threshold=0.9)
         result = detector.detect(_healthy_trace())
-        # Even healthy trace might not maintain 0.9 overlap
         assert result.pathology is Pathology.CONTEXT_EROSION
 
     def test_custom_min_messages(self):
@@ -180,6 +285,22 @@ class TestConfig:
     def test_invalid_min_messages(self):
         with pytest.raises(ValueError):
             ContextErosionDetector(min_messages=0)
+
+    def test_invalid_min_early_recall(self):
+        with pytest.raises(ValueError):
+            ContextErosionDetector(min_early_recall=1.5)
+
+    def test_invalid_min_early_recall_negative(self):
+        with pytest.raises(ValueError):
+            ContextErosionDetector(min_early_recall=-0.1)
+
+    def test_default_threshold_is_0_35(self):
+        detector = ContextErosionDetector()
+        assert detector._threshold == 0.35
+
+    def test_default_min_early_recall_is_0_30(self):
+        detector = ContextErosionDetector()
+        assert detector._min_early_recall == 0.30
 
 
 class TestSeverity:
