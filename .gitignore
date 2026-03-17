@@ -197,6 +197,7 @@ AGENTS.md
 
 # PyPI configuration file
 .pypirc
+.pypi-token
 
 # Cursor
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
@@ -209,3 +210,9 @@ AGENTS.md
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+docs/
+.claudeignore
+
+# Case study notebook outputs
+case_study/.ipynb_checkpoints/
