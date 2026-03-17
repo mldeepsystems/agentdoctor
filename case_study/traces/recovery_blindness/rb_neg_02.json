@@ -1,0 +1,64 @@
+{
+  "trace_id": "rb-neg-02-double-failure-graceful-fallback",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Agent encounters two sequential tool failures and handles both gracefully, ultimately falling back to its own knowledge with transparent disclosure",
+    "difficulty": "medium"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a travel planning assistant. Help users plan trips by looking up flights, hotels, and local attractions. If tools fail, be transparent and offer what help you can from your training data."
+    },
+    {
+      "role": "user",
+      "content": "I'm planning a trip to Kyoto, Japan in April. Can you find me round-trip flights from SFO and recommend some hotels near the Higashiyama district?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'd love to help you plan a Kyoto trip! April is a wonderful time — cherry blossom season. Let me search for flights first.",
+      "tool_calls": [
+        {
+          "tool_name": "flight_search",
+          "arguments": {"origin": "SFO", "destination": "KIX", "departure_date": "2026-04-01", "return_date": "2026-04-10", "passengers": 1, "cabin_class": "economy"},
+          "result": "Error: The flight search API is currently undergoing maintenance. Expected restoration: 2026-03-17 06:00 UTC.",
+          "success": false,
+          "error_message": "Service maintenance window"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Unfortunately, the flight search service is currently down for maintenance. Let me try a different tool to look up hotel availability near Higashiyama instead, and we can come back to flights later.",
+      "tool_calls": [
+        {
+          "tool_name": "hotel_search",
+          "arguments": {"city": "Kyoto", "country": "Japan", "neighborhood": "Higashiyama", "check_in": "2026-04-01", "check_out": "2026-04-10", "guests": 1},
+          "result": "Error: Request failed with status 502 Bad Gateway. The hotel booking provider returned an invalid response.",
+          "success": false,
+          "error_message": "502 Bad Gateway"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I'm sorry, but the hotel search tool also returned an error — it looks like there are some broader service issues right now. I'm unable to pull live pricing and availability at the moment.\n\nHowever, I can still help based on what I know. Here are my recommendations for your Kyoto trip:\n\n**Flights (SFO → KIX):**\n- Direct flights are available on ANA and JAL, typically $900–$1,400 round-trip in economy for April. United also offers one-stop options through NRT.\n- I'd recommend checking Google Flights or Skyscanner directly — April is peak cherry blossom season, so booking early is important.\n\n**Hotels near Higashiyama:**\n- **Hyatt Regency Kyoto** — Upscale, right in the Higashiyama area, walking distance to Sanjusangendo temple.\n- **Hotel Kanra Kyoto** — Boutique hotel with traditional Japanese design, very close to Gojo station.\n- **Gion Shinmonso** — A traditional ryokan experience if you'd like something more authentic.\n\nWould you like me to try the searches again later, or is there anything else I can help with for your Kyoto planning?"
+    },
+    {
+      "role": "user",
+      "content": "That's really helpful already! What are the must-see spots during cherry blossom season in Kyoto?"
+    },
+    {
+      "role": "assistant",
+      "content": "Kyoto is arguably the best place in Japan for cherry blossoms. Here are the top spots:\n\n1. **Philosopher's Path (Tetsugaku no Michi)** — A 2km canal-side walkway lined with hundreds of cherry trees. Best in early April.\n2. **Maruyama Park** — The most popular hanami (blossom viewing) spot in Kyoto, centered around a massive weeping cherry tree that's illuminated at night.\n3. **Kiyomizu-dera Temple** — The iconic hillside temple is surrounded by over 1,500 cherry trees. The spring night illumination is breathtaking.\n4. **Arashiyama** — The bamboo grove area also has stunning cherry blossoms along the Togetsukyo Bridge and Tenryu-ji temple grounds.\n5. **Daigo-ji Temple** — Less crowded than central spots, with over 800 cherry trees and a legendary connection to Toyotomi Hideyoshi's famous blossom-viewing party.\n\nPeak bloom in Kyoto typically falls between March 28 and April 7, so your early April timing should be perfect. I'd suggest visiting the more popular spots early in the morning to avoid the biggest crowds."
+    },
+    {
+      "role": "user",
+      "content": "Amazing. I'll check flights myself and come back if I need more help. Thank you!"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! That sounds like a great plan. When you're ready to book hotels or need a day-by-day itinerary, just let me know — I'm happy to help you build out the full trip. Have a wonderful time planning your Kyoto adventure!"
+    }
+  ]
+}

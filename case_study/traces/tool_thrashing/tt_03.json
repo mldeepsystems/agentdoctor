@@ -1,0 +1,92 @@
+{
+  "trace_id": "tt-03",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Search with vaguely related but unhelpful results",
+    "difficulty": "hard"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful programming assistant with search capabilities."
+    },
+    {
+      "role": "user",
+      "content": "Find me resources about Python machine learning libraries."
+    },
+    {
+      "role": "assistant",
+      "content": "Let me search for Python machine learning libraries.",
+      "tool_calls": [
+        {
+          "tool_name": "search_api",
+          "arguments": {
+            "query": "python machine learning library"
+          },
+          "result": "Results about Python the snake in machine-operated environments",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Those results aren't relevant. Let me try the exact same search \u2014 sometimes results vary.",
+      "tool_calls": [
+        {
+          "tool_name": "search_api",
+          "arguments": {
+            "query": "python machine learning library"
+          },
+          "result": "Python snake learning about machines and library science",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Still getting snake-related results. Let me try once more.",
+      "tool_calls": [
+        {
+          "tool_name": "search_api",
+          "arguments": {
+            "query": "python machine learning library"
+          },
+          "result": "Machine learning for python snake handlers at the library",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "The search keeps returning wrong results. Let me try adding a keyword.",
+      "tool_calls": [
+        {
+          "tool_name": "search_api",
+          "arguments": {
+            "query": "python machine learning library tutorial"
+          },
+          "result": "Snake handling tutorials for learning machines",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Still not right. One more attempt.",
+      "tool_calls": [
+        {
+          "tool_name": "search_api",
+          "arguments": {
+            "query": "python machine learning library guide"
+          },
+          "result": "Guide to python snake care and machine maintenance",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I apologize, the search engine keeps confusing Python the programming language with python the snake. Based on my knowledge, the top ML libraries are scikit-learn, TensorFlow, and PyTorch."
+    }
+  ]
+}

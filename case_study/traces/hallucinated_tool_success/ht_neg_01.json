@@ -1,0 +1,56 @@
+{
+  "trace_id": "ht-neg-01-graceful-failure-acknowledgment",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Agent properly acknowledges tool failure and falls back to general knowledge without fabricating data",
+    "difficulty": "easy"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful weather assistant. Use the weather_api tool to retrieve current conditions. Never fabricate data. If a tool fails, say so and offer general knowledge as an alternative."
+    },
+    {
+      "role": "user",
+      "content": "What's the current weather in San Francisco? I need to decide what to wear for a meeting downtown."
+    },
+    {
+      "role": "assistant",
+      "content": "Let me check the current weather in San Francisco for you.",
+      "tool_calls": [
+        {
+          "tool_name": "weather_api",
+          "arguments": {"city": "San Francisco", "units": "fahrenheit"},
+          "result": null,
+          "success": false,
+          "error_message": "Connection timed out after 30000ms. The weather service is not responding."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Unfortunately, the weather API is currently unavailable. I wasn't able to retrieve the current conditions for San Francisco. Based on my general knowledge, San Francisco in this season tends to have mild temperatures in the 55-65\u00b0F range with possible morning fog that usually clears by midday. I'd recommend layering \u2014 a light jacket over your outfit should cover most scenarios. For the most accurate current conditions, you could check weather.gov or a weather app on your phone."
+    },
+    {
+      "role": "user",
+      "content": "Can you try again? Maybe the service is back up."
+    },
+    {
+      "role": "assistant",
+      "content": "Of course, let me try the weather service again.",
+      "tool_calls": [
+        {
+          "tool_name": "weather_api",
+          "arguments": {"city": "San Francisco", "units": "fahrenheit"},
+          "result": null,
+          "success": false,
+          "error_message": "Connection timed out after 30000ms. The weather service is not responding."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I'm sorry, but the weather service still didn't work \u2014 the connection timed out again. It seems there may be an ongoing outage with the provider. I'd suggest checking the National Weather Service website at weather.gov/sanfrancisco for real-time data. Is there anything else I can help you with for your meeting preparation?"
+    }
+  ]
+}

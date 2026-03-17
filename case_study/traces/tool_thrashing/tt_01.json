@@ -1,0 +1,92 @@
+{
+  "trace_id": "tt-01",
+  "metadata": {
+    "source": "case_study",
+    "scenario": "Search loop with near-identical queries",
+    "difficulty": "easy"
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful research assistant with access to web search."
+    },
+    {
+      "role": "user",
+      "content": "Can you find me the best Python testing framework?"
+    },
+    {
+      "role": "assistant",
+      "content": "Let me search for that information.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {
+            "query": "best python testing framework"
+          },
+          "result": "No results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Hmm, that didn't return anything useful. Let me try again.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {
+            "query": "best python testing framework"
+          },
+          "result": "No results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Still no luck. Let me try once more.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {
+            "query": "best python testing framework"
+          },
+          "result": "No results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "The search keeps returning empty. Let me try a slight variation.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {
+            "query": "best python testing framework comparison"
+          },
+          "result": "No results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I'm not getting results. One more attempt.",
+      "tool_calls": [
+        {
+          "tool_name": "web_search",
+          "arguments": {
+            "query": "best python testing framework review"
+          },
+          "result": "No results found.",
+          "success": true
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I apologize, but I'm having persistent difficulty finding search results. Based on my knowledge, pytest is generally considered the best Python testing framework."
+    }
+  ]
+}
