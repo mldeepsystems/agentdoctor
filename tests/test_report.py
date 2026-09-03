@@ -61,6 +61,102 @@ class TestDetectedPathologies:
         assert report.detected_pathologies == []
 
 
+class TestDetectedPathologyTypes:
+    def test_returns_pathology_members_not_results(self):
+        report = DiagnosticReport(
+            trace_id="t-1",
+            results=[
+                _make_result(Pathology.TOOL_THRASHING, detected=True),
+                _make_result(Pathology.CONTEXT_EROSION, detected=False),
+                _make_result(Pathology.GOAL_HIJACKING, detected=True),
+            ],
+        )
+        assert report.detected_pathology_types == [
+            Pathology.TOOL_THRASHING,
+            Pathology.GOAL_HIJACKING,
+        ]
+
+    def test_membership_test_works(self):
+        # The whole point of the accessor: this is the test users reach for,
+        # and on `detected_pathologies` it is silently False.
+        report = DiagnosticReport(
+            trace_id="t-2",
+            results=[_make_result(Pathology.RECOVERY_BLINDNESS, detected=True)],
+        )
+        assert Pathology.RECOVERY_BLINDNESS in report.detected_pathology_types
+        assert Pathology.TOOL_THRASHING not in report.detected_pathology_types
+
+    def test_empty_when_none_detected(self):
+        report = DiagnosticReport(
+            trace_id="t-3",
+            results=[_make_result(Pathology.TOOL_THRASHING, detected=False)],
+        )
+        assert report.detected_pathology_types == []
+
+    def test_empty_results(self):
+        assert DiagnosticReport(trace_id="t-4", results=[]).detected_pathology_types == []
+
+
+class TestHasPathology:
+    def test_true_when_detected(self):
+        report = DiagnosticReport(
+            trace_id="t-1",
+            results=[_make_result(Pathology.RECOVERY_BLINDNESS, detected=True)],
+        )
+        assert report.has_pathology(Pathology.RECOVERY_BLINDNESS) is True
+
+    def test_false_when_present_but_not_detected(self):
+        # A detector that ran and found nothing must not count as a detection.
+        report = DiagnosticReport(
+            trace_id="t-2",
+            results=[_make_result(Pathology.RECOVERY_BLINDNESS, detected=False)],
+        )
+        assert report.has_pathology(Pathology.RECOVERY_BLINDNESS) is False
+
+    def test_false_when_absent(self):
+        report = DiagnosticReport(
+            trace_id="t-3",
+            results=[_make_result(Pathology.TOOL_THRASHING, detected=True)],
+        )
+        assert report.has_pathology(Pathology.RECOVERY_BLINDNESS) is False
+
+    def test_false_on_empty_report(self):
+        assert (
+            DiagnosticReport(trace_id="t-4", results=[]).has_pathology(Pathology.TOOL_THRASHING)
+            is False
+        )
+
+    def test_agrees_with_detected_pathology_types(self):
+        report = DiagnosticReport(
+            trace_id="t-5",
+            results=[
+                _make_result(Pathology.TOOL_THRASHING, detected=True),
+                _make_result(Pathology.CONTEXT_EROSION, detected=False),
+                _make_result(Pathology.GOAL_HIJACKING, detected=True),
+            ],
+        )
+        for pathology in Pathology:
+            assert report.has_pathology(pathology) == (
+                pathology in report.detected_pathology_types
+            )
+
+
+class TestPathologyMembershipFootgun:
+    """The behaviour the new accessors exist to route around (#38)."""
+
+    def test_pathology_is_never_in_detected_pathologies(self):
+        # `detected_pathologies` holds DetectorResult objects, so the natural
+        # membership test is False even though the pathology WAS detected.
+        # Pinned so that if the element type ever changes, whoever changes it
+        # sees this and updates the docstrings that warn about it.
+        report = DiagnosticReport(
+            trace_id="t-1",
+            results=[_make_result(Pathology.RECOVERY_BLINDNESS, detected=True)],
+        )
+        assert Pathology.RECOVERY_BLINDNESS not in report.detected_pathologies
+        assert report.has_pathology(Pathology.RECOVERY_BLINDNESS) is True
+
+
 class TestHighestSeverity:
     def test_returns_highest(self):
         report = DiagnosticReport(

@@ -54,7 +54,20 @@ report = diagnoser.diagnose(trace)
 print(report.summary())
 report.to_json("diagnostic_report.json")
 report.to_markdown("diagnostic_report.md")
+
+# Inspect results programmatically
+from agentdx import Pathology
+
+report.has_pathology(Pathology.RECOVERY_BLINDNESS)  # -> bool
+report.detected_pathology_types                     # -> [Pathology, ...]
+report.detected_pathologies                         # -> [DetectorResult, ...]
+report.highest_severity                             # -> Severity | None
 ```
+
+`detected_pathologies` returns the full `DetectorResult` for each detection, so
+`Pathology.X in report.detected_pathologies` is always `False`. Use
+`has_pathology()` or `detected_pathology_types` to ask whether a pathology was
+detected.
 
 The trace file is a JSON object with a `messages` array. Each message has a `role`, `content`, and optional `tool_calls`:
 
