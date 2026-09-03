@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from agentdx.models import DetectorResult, Severity
-from agentdx.taxonomy import PATHOLOGY_REGISTRY
+from agentdx.taxonomy import PATHOLOGY_REGISTRY, Pathology
 
 _SEVERITY_ORDER: tuple[Severity, ...] = tuple(Severity)
 
@@ -27,8 +27,36 @@ class DiagnosticReport:
 
     @property
     def detected_pathologies(self) -> list[DetectorResult]:
-        """Return only results where the pathology was detected."""
+        """Return only results where the pathology was detected.
+
+        Note that the elements are :class:`DetectorResult` objects, not
+        :class:`~agentdx.taxonomy.Pathology` members, so a membership test
+        against a ``Pathology`` is always ``False``. Use
+        :attr:`detected_pathology_types` or :meth:`has_pathology` to ask
+        whether a particular pathology was detected.
+        """
         return [r for r in self.results if r.detected]
+
+    @property
+    def detected_pathology_types(self) -> list[Pathology]:
+        """Return the :class:`Pathology` members that were detected.
+
+        The companion to :attr:`detected_pathologies`, which returns the full
+        :class:`DetectorResult` for each detection. Order follows
+        :attr:`results`.
+        """
+        return [r.pathology for r in self.results if r.detected]
+
+    def has_pathology(self, pathology: Pathology) -> bool:
+        """Return whether ``pathology`` was detected in this trace.
+
+        ``pathology in report.detected_pathologies`` looks like it answers
+        this and does not: that list holds ``DetectorResult`` objects, so the
+        test is silently ``False`` even when the pathology was detected, and
+        a type checker cannot flag it because ``list.__contains__`` accepts
+        any object.
+        """
+        return any(r.detected and r.pathology is pathology for r in self.results)
 
     @property
     def highest_severity(self) -> Severity | None:
