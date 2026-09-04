@@ -79,6 +79,22 @@ The trace file is a JSON object with a `messages` array. Each message has a `rol
 }
 ```
 
+### One-liner
+
+`agentdx.diagnose()` parses and diagnoses in a single call, taking the same
+file path, dict, or message list as `JSONParser`:
+
+```python
+import agentdx
+
+report = agentdx.diagnose("trace.json")
+report = agentdx.diagnose(trace_dict, detectors=[ToolThrashingDetector()])
+```
+
+`Diagnoser` and `JSONParser` remain the API for anything more involved —
+reusing a parser, inspecting the `Trace` before diagnosing it, or running one
+diagnoser over many traces.
+
 ## Architecture
 
 agentdx uses a three-tier detection architecture:

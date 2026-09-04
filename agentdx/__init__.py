@@ -29,6 +29,9 @@ from agentdx.parsers import BaseParser, JSONParser
 from agentdx.report import DiagnosticReport
 from agentdx.taxonomy import PATHOLOGY_REGISTRY, Pathology
 
+# Imported last: agentdx.api depends on the names above.
+from agentdx.api import diagnose
+
 __all__ = [
     "ALL_DETECTORS",
     "BaseDetector",
@@ -43,6 +46,7 @@ __all__ = [
     "SilentDegradationDetector",
     "ToolThrashingDetector",
     "DetectorResult",
+    "diagnose",
     "JSONParser",
     "Message",
     "PATHOLOGY_REGISTRY",
